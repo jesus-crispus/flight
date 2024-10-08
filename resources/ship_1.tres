@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ShipResource" load_steps=3 format=3 uid="uid://cy0ruo8blca0p"]
+
+[ext_resource type="Script" path="res://script/ship_resource.gd" id="1_7usar"]
+
+[sub_resource type="Curve" id="Curve_d6ele"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[resource]
+script = ExtResource("1_7usar")
+thrust_curve = SubResource("Curve_d6ele")
+engine_on_off = false
+throttle = 0.0
+engine_shift_speed = 0.5
+thrust = 50.0

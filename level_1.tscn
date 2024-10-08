@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3 uid="uid://rp6iui1p8m68"]
+
+[ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://planet.tscn" id="1_mq4i5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gbxv8"]
+albedo_color = Color(0.329158, 0.329158, 0.329158, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
+noise_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7uqr"]
+width = 1000
+height = 5000
+noise = SubResource("FastNoiseLite_e42dc")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hkjni"]
+albedo_color = Color(0.48492, 0.48492, 0.48492, 1)
+albedo_texture = SubResource("NoiseTexture2D_r7uqr")
+
+[sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
+material = SubResource("StandardMaterial3D_hkjni")
+size = Vector2(1000, 5000)
+
+[sub_resource type="GDScript" id="GDScript_ego1s"]
+script/source = "extends AnimatableBody3D
+
+var tween: Tween
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	tween = Tween.new()
+	print(self.global_position.x,self.global_position.y)
+	#tween.tween_property(self.global_position)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nbwak"]
+size = Vector3(1.23, 2.305, 1)
+
+[node name="level1" type="Node3D"]
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+material_override = SubResource("StandardMaterial3D_gbxv8")
+use_collision = true
+
+[node name="planet" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 146.378, 272.234, 0)
+
+[node name="planet2" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106.897, 305.165, 0)
+
+[node name="planet3" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135.182, 491.335, 0)
+
+[node name="planet4" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -254.794, 639.203, 0)
+radius = 37.7328
+
+[node name="CSGSphere3D6" type="CSGSphere3D" parent="CSGCombiner3D"]
+transform = Transform3D(0.992384, 0.123186, 0, -0.123186, 0.992384, 0, 0, 0, 1, -20.5024, 615.98, 0)
+radius = 46.065
+radial_segments = 20
+rings = 10
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D/CSGSphere3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2483, -0.672058, 24.9031)
+operation = 2
+size = Vector3(37.0229, 148.234, 72.56)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -39.5065)
+mesh = SubResource("QuadMesh_xjipn")
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+script = SubResource("GDScript_ego1s")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.08, -2.58, 0)
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D/StaticBody3D"]
+visible = false
+shape = SubResource("BoxShape3D_nbwak")
