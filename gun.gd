@@ -2,7 +2,7 @@ extends Node3D
 
 
 
-var projectile_packed_scene: PackedScene = preload("res://projectile.tscn")
+var projectile_packed_scene: PackedScene = preload("res://scenes/projectile.tscn")
 var reload_time: float
 var fire_rate: float
 var magazine_size: int

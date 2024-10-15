@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="flight"
-run/main_scene="res://main.tscn"
+run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"
@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+
+[global_group]
+
+player=""
 
 [input]
 

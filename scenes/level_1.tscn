@@ -1,28 +1,40 @@
 [gd_scene load_steps=35 format=3 uid="uid://rp6iui1p8m68"]
 
-[ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://planet.tscn" id="1_mq4i5"]
-[ext_resource type="PackedScene" uid="uid://crt65xu8olf50" path="res://player.tscn" id="3_ah2ph"]
+[ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
+[ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
+[ext_resource type="PackedScene" uid="uid://crt65xu8olf50" path="res://scenes/player.tscn" id="3_ah2ph"]
+[ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gbxv8"]
-albedo_color = Color(0.329158, 0.329158, 0.329158, 1)
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
+noise_type = 5
+frequency = 0.0076
+fractal_type = 3
+fractal_octaves = 10
+fractal_lacunarity = 3.215
+fractal_gain = 0.1
 
-[sub_resource type="Gradient" id="Gradient_i3el5"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_e5ljo"]
-noise_type = 2
-fractal_lacunarity = 2.055
-fractal_gain = 0.3
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mxo31"]
-width = 1024
-height = 1024
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7uqr"]
+width = 1000
+height = 1000
 seamless = true
-color_ramp = SubResource("Gradient_i3el5")
-noise = SubResource("FastNoiseLite_e5ljo")
+noise = SubResource("FastNoiseLite_e42dc")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o2no1"]
-albedo_color = Color(0.363045, 0.771283, 0.644502, 1)
-albedo_texture = SubResource("NoiseTexture2D_mxo31")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2qk16"]
+width = 1000
+height = 1000
+seamless = true
+as_normal_map = true
+bump_strength = 50.0
+noise = SubResource("FastNoiseLite_e42dc")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hkjni"]
+albedo_color = Color(0.48492, 0.48492, 0.48492, 1)
+albedo_texture = SubResource("NoiseTexture2D_r7uqr")
+metallic = 1.0
+roughness = 0.56
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_2qk16")
+uv1_scale = Vector3(10, 50, 1)
 
 [sub_resource type="Curve" id="Curve_kw0xm"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -60,41 +72,14 @@ shape = 0
 size = 4.02
 curve = SubResource("Curve_vtjbv")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
-noise_type = 5
-frequency = 0.028
-fractal_type = 3
-fractal_octaves = 10
-fractal_gain = 0.1
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7uqr"]
-width = 1000
-height = 5000
-seamless = true
-noise = SubResource("FastNoiseLite_e42dc")
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2qk16"]
-width = 1000
-height = 5000
-seamless = true
-as_normal_map = true
-bump_strength = 50.0
-noise = SubResource("FastNoiseLite_e42dc")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hkjni"]
-albedo_color = Color(0.48492, 0.48492, 0.48492, 1)
-albedo_texture = SubResource("NoiseTexture2D_r7uqr")
-metallic = 1.0
-roughness = 0.56
-normal_enabled = true
-normal_texture = SubResource("NoiseTexture2D_2qk16")
-
 [sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
 material = SubResource("StandardMaterial3D_hkjni")
 size = Vector2(1000, 5000)
+subdivide_width = 10
+subdivide_depth = 50
 
 [sub_resource type="GDScript" id="GDScript_rmdts"]
-script/source = "@tool 
+script/source = "#@tool 
 extends Area3D
 
 @export var radius: float
@@ -122,6 +107,12 @@ func set_radius():
 	
 	
 	$CollisionShape3D.shape.radius = radius
+
+
+func _on_body_entered(body: Node3D) -> void:
+	if body.is_in_group(\"player\"):
+		
+		pass
 "
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jxl2i"]
@@ -166,6 +157,18 @@ frequency = 0.0505
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_8vq7o"]
 noise = SubResource("FastNoiseLite_y6xwl")
 
+[sub_resource type="SystemFont" id="SystemFont_ntehk"]
+font_names = PackedStringArray("Rockwell")
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_c82qv"]
+Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
+Button/fonts/font = SubResource("SystemFont_ntehk")
+
+[sub_resource type="Theme" id="Theme_8t3af"]
+Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
+Button/fonts/font = SubResource("SystemFont_ntehk")
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dkt5e"]
 sky_top_color = Color(0.877036, 0.75244, 0.992108, 1)
 
@@ -199,11 +202,11 @@ func _process(delta: float) -> void:
 	rotate_y(0.1 * delta)
 "
 
-[node name="level1" type="Node3D"]
+[node name="Level1" type="Node3D"]
+script = ExtResource("1_07gk5")
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
-material_override = SubResource("StandardMaterial3D_gbxv8")
-material_overlay = SubResource("StandardMaterial3D_o2no1")
+material_override = SubResource("StandardMaterial3D_hkjni")
 use_collision = true
 
 [node name="planet" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
@@ -423,22 +426,56 @@ strength = 128.0
 size = Vector3(9, 8.1792, 15)
 texture = SubResource("NoiseTexture3D_8vq7o")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="Ui" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Ui/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="Ui/VBoxContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PuaseMenu" type="PanelContainer" parent="Ui"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="Ui/PuaseMenu"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui/PuaseMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "place holder"
+label_settings = ExtResource("3_bb42l")
+
+[node name="Button" type="Button" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_c82qv")
+text = "Restart
+"
+
+[node name="Button2" type="Button" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_8t3af")
+text = "22
+"
+
+[node name="VictoryScreen" type="Control" parent="Ui"]
+visible = false
 layout_mode = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -450,6 +487,7 @@ light_color = Color(0.961667, 0.9, 1, 1)
 light_energy = 2.0
 script = SubResource("GDScript_ukgk2")
 
+[connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
 [connection signal="property_list_changed" from="objective" to="objective" method="_on_property_list_changed"]
 
 [editable path="CSGCombiner3D/planet5"]

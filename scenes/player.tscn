@@ -1,10 +1,11 @@
-[gd_scene load_steps=37 format=3 uid="uid://crt65xu8olf50"]
+[gd_scene load_steps=39 format=3 uid="uid://crt65xu8olf50"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_4ppyf"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_0em3p"]
 [ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://ship_metal.tres" id="3_3fxje"]
 [ext_resource type="Script" path="res://gun.gd" id="3_ayxod"]
 [ext_resource type="Script" path="res://engine.gd" id="4_ubfvq"]
+[ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_b6y4e"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -45,6 +46,11 @@ refraction_scale = 0.74
 [sub_resource type="SphereMesh" id="SphereMesh_vsdj2"]
 material = SubResource("StandardMaterial3D_fanfo")
 height = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_dpho2"]
+radius = 0.7
+height = 1.5
+is_hemisphere = true
 
 [sub_resource type="GDScript" id="GDScript_yqvit"]
 script/source = "extends Camera3D
@@ -212,7 +218,7 @@ func update_range(throttle: float) -> void:
 	
 "
 
-[node name="RigidBody3D" type="RigidBody3D"]
+[node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
 axis_lock_linear_z = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
@@ -245,7 +251,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.40413e-07, 5.5, 0)
 mesh = SubResource("CylinderMesh_qjs6f")
 skeleton = NodePath("../..")
 
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D" groups=["player"]]
 transform = Transform3D(0, 3.55271e-15, -1, -4.23516e-22, 1, 3.55271e-15, 1, 4.23516e-22, 0, -9.97063e-08, 2.28101, 0)
 material_override = ExtResource("3_3fxje")
 mesh = SubResource("PrismMesh_nqa1p")
@@ -269,6 +275,11 @@ skeleton = NodePath("../MeshInstance3D4")
 transform = Transform3D(0.939648, 0.342004, 0.00980861, -0.34202, 0.939693, -1.71555e-08, -0.00921708, -0.00335472, 0.999952, -0.52886, 4.79553, 1.86502e-07)
 mesh = SubResource("SphereMesh_vsdj2")
 
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, -1.64203e-15, 0, -1.64203e-15, 1, -0.144937, 4.4997, 1.90353e-07)
+material_override = ExtResource("3_3fxje")
+mesh = SubResource("SphereMesh_dpho2")
+
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
@@ -278,6 +289,7 @@ script = SubResource("GDScript_yqvit")
 
 [node name="Gun" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.482551, 4.51484, -0.229239)
+visible = false
 script = ExtResource("3_ayxod")
 cooldown_time = 0.205
 
@@ -303,6 +315,12 @@ process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
 script = ExtResource("4_ubfvq")
 
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster"]
+stream = ExtResource("6_b6y4e")
+volume_db = 60.622
+autoplay = true
+parameters/looping = true
+
 [node name="GPUParticles3D" type="GPUParticles3D" parent="thruster"]
 process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
@@ -311,8 +329,6 @@ amount = 1000
 lifetime = 2.0
 randomness = 1.0
 fixed_fps = 60
-interpolate = false
-fract_delta = false
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
 draw_order = 2
 process_material = SubResource("ParticleProcessMaterial_e3xkk")
