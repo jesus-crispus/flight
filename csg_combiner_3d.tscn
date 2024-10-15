@@ -7,6 +7,8 @@ albedo_color = Color(0.278991, 0.278991, 0.278991, 1)
 use_collision = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.32116, 0.940344, 0.581291)
-size = Vector3(70.6163, 1, 40)
+size = Vector3(70, 1, 40)
 material = SubResource("StandardMaterial3D_nb2kn")
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="."]
+size = Vector3(70, 1, 40)

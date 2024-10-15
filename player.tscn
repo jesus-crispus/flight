@@ -1,10 +1,13 @@
-[gd_scene load_steps=20 format=3 uid="uid://crt65xu8olf50"]
+[gd_scene load_steps=37 format=3 uid="uid://crt65xu8olf50"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_4ppyf"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_0em3p"]
+[ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://ship_metal.tres" id="3_3fxje"]
+[ext_resource type="Script" path="res://gun.gd" id="3_ayxod"]
+[ext_resource type="Script" path="res://engine.gd" id="4_ubfvq"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_1cb5n"]
-height = 8.93713
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
+height = 7.47168
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1ygqx"]
 
@@ -17,6 +20,7 @@ height = 8.0
 cap_top = false
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qjs6f"]
+material = ExtResource("3_3fxje")
 top_radius = 0.0
 bottom_radius = 1.0
 height = 3.0
@@ -28,6 +32,19 @@ size = Vector3(8, 6.76, 0.2)
 
 [sub_resource type="PrismMesh" id="PrismMesh_mtw3f"]
 size = Vector3(3.685, 1.935, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fanfo"]
+albedo_color = Color(1, 0, 0.0666666, 1)
+roughness = 0.0
+clearcoat_enabled = true
+anisotropy = -1.0
+ao_enabled = true
+backlight = Color(0.00351917, 0.00351917, 0.00351917, 1)
+refraction_scale = 0.74
+
+[sub_resource type="SphereMesh" id="SphereMesh_vsdj2"]
+material = SubResource("StandardMaterial3D_fanfo")
+height = 2.0
 
 [sub_resource type="GDScript" id="GDScript_yqvit"]
 script/source = "extends Camera3D
@@ -42,22 +59,19 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	pass
 	look_at(player.position)
+	
 "
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2x4ii"]
-shading_mode = 0
-albedo_color = Color(1, 0.674724, 0.293799, 1)
-use_point_size = true
-point_size = 4.9
+[sub_resource type="CylinderMesh" id="CylinderMesh_2y68j"]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 3.0
 
-[sub_resource type="PointMesh" id="PointMesh_38m0o"]
-material = SubResource("StandardMaterial3D_2x4ii")
+[sub_resource type="GDScript" id="GDScript_65l02"]
+script/source = "extends Node3D
 
-[sub_resource type="GDScript" id="GDScript_2huht"]
-script/source = "extends CPUParticles3D
-
-@onready var ship_resourse: ShipResource = get_parent().ship_resourse
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -67,78 +81,163 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
-"
 
-[sub_resource type="Curve" id="Curve_7xnt6"]
-min_value = -1.0
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.110561, -0.280203), 0.0, 0.0, 0, 0, Vector2(0.846535, 0.208122), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_qqtq1"]
-curve = SubResource("Curve_7xnt6")
-
-[sub_resource type="Curve" id="Curve_f3spd"]
-max_value = 3.0
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_paw5a"]
-curve = SubResource("Curve_f3spd")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yiojq"]
-lifetime_randomness = 0.68
-particle_flag_align_y = true
-emission_shape = 6
-emission_ring_axis = Vector3(0, 0, 1)
-emission_ring_height = -1.15
-emission_ring_radius = 1.0
-emission_ring_inner_radius = 0.0
-inherit_velocity_ratio = 1.0
-velocity_pivot = Vector3(-7, 0, 0)
-direction = Vector3(-1, 0, 0)
-spread = 15.178
-gravity = Vector3(0, 0, 0)
-scale_over_velocity_min = 33.9
-scale_over_velocity_max = 155.93
-scale_over_velocity_curve = SubResource("CurveTexture_paw5a")
-hue_variation_min = -2.23517e-08
-hue_variation_max = 1.0
-hue_variation_curve = SubResource("CurveTexture_qqtq1")
-
-[sub_resource type="GDScript" id="GDScript_54o8m"]
-script/source = "extends GPUParticles3D
-
-@export var body: RigidBody3D
-func update_particles():
-	process_material.process_material
+func _physics_process(delta: float) -> void:
 	pass
 "
 
+[sub_resource type="Curve" id="Curve_bqauu"]
+_data = [Vector2(0, 1), 0.0, -0.226728, 0, 0, Vector2(1, 0.186433), -2.02555, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_cg8db"]
+curve = SubResource("Curve_bqauu")
+
+[sub_resource type="Gradient" id="Gradient_rmsrc"]
+colors = PackedColorArray(1, 0.806, 0.03, 1, 1, 0.25, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ury25"]
+gradient = SubResource("Gradient_rmsrc")
+
+[sub_resource type="Gradient" id="Gradient_d553j"]
+offsets = PackedFloat32Array(0, 0.228873, 0.778169)
+colors = PackedColorArray(1, 1, 1, 1, 0.140845, 0.140845, 0.140845, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_lm51r"]
+gradient = SubResource("Gradient_d553j")
+
+[sub_resource type="Curve" id="Curve_vha8u"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.740741, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_c8cns"]
+curve = SubResource("Curve_vha8u")
+
+[sub_resource type="Curve" id="Curve_21jd5"]
+_data = [Vector2(0, 0.321483), 0.0, 0.240047, 0, 0, Vector2(0.675926, 1), -0.0300573, -0.0300573, 0, 0, Vector2(1, 0.483737), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_dgcbg"]
+curve = SubResource("Curve_21jd5")
+
+[sub_resource type="Curve" id="Curve_q3v4k"]
+max_value = 3.0
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 2.08548), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jpcm8"]
+curve = SubResource("Curve_q3v4k")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
+inherit_velocity_ratio = 1.0
+direction = Vector3(0, -1, 0)
+spread = 15.652
+initial_velocity_min = 26.32
+initial_velocity_max = 26.32
+gravity = Vector3(0, 0, 0)
+scale_min = 0.4
+scale_curve = SubResource("CurveTexture_dgcbg")
+scale_over_velocity_curve = SubResource("CurveTexture_jpcm8")
+color_ramp = SubResource("GradientTexture1D_lm51r")
+color_initial_ramp = SubResource("GradientTexture1D_ury25")
+alpha_curve = SubResource("CurveTexture_cg8db")
+emission_curve = SubResource("CurveTexture_c8cns")
+collision_mode = 1
+collision_friction = 0.0
+collision_bounce = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhrmw"]
+transparency = 1
+depth_draw_mode = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.99, 0.4455, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_6mc63"]
+material = SubResource("StandardMaterial3D_hhrmw")
+radius = 1.0
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6bl3f"]
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7y3pv"]
+material = SubResource("StandardMaterial3D_6bl3f")
+
+[sub_resource type="GDScript" id="GDScript_pojkl"]
+script/source = "extends OmniLight3D
+
+var max_energy: float
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	max_energy = light_energy
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func update_range(throttle):
+	light_energy = max_energy * throttle
+"
+
+[sub_resource type="GDScript" id="GDScript_30xwn"]
+script/source = "extends SpotLight3D
+
+var max_energy: float
+var angle: float
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	max_energy = light_energy
+	angle = spot_angle
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func update_range(throttle: float) -> void:
+	if throttle != 0:
+		light_energy = max_energy * throttle + randf_range(-25 + (-25 * throttle), 25 + (25 * throttle))
+		if light_energy < 0:
+			light_energy = 0
+	else:
+		light_energy = 0   
+	
+	
+	spot_angle = angle - (throttle * 20)
+	
+"
+
 [node name="RigidBody3D" type="RigidBody3D"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 7.81467, 0)
 axis_lock_linear_z = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 mass = 1000.0
 continuous_cd = true
+linear_damp = 0.7
 angular_damp = 1.0
 script = ExtResource("1_4ppyf")
 ship_resourse = ExtResource("2_0em3p")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -2.399, 0, 0)
-shape = SubResource("CylinderShape3D_1cb5n")
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, 0.455868, 0)
+shape = SubResource("CapsuleShape3D_35t6q")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 1, 0, 0)
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 4.9454, 0)
 shape = SubResource("SphereShape3D_1ygqx")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -6.91393, 3.02217e-07, -0.11281)
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -3.92186, -0.1)
 shape = SubResource("ConvexPolygonShape3D_o56j1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -3, 0, 0)
+transform = Transform3D(-4.37114e-08, -4.37114e-08, 1, -4.37114e-08, 1, 4.37114e-08, -1, -4.37114e-08, -4.37114e-08, 0, 0, 0)
+material_override = ExtResource("3_3fxje")
 mesh = SubResource("CylinderMesh_o5h0k")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D"]
@@ -148,62 +247,132 @@ skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D"]
 transform = Transform3D(0, 3.55271e-15, -1, -4.23516e-22, 1, 3.55271e-15, 1, 4.23516e-22, 0, -9.97063e-08, 2.28101, 0)
+material_override = ExtResource("3_3fxje")
 mesh = SubResource("PrismMesh_nqa1p")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D"]
 transform = Transform3D(1.91069e-15, 0, -1, -4.37114e-08, 1, 0, 1, 4.37114e-08, 1.91069e-15, 1.30134e-07, -2.97712, 0)
+layers = 2
+material_override = ExtResource("3_3fxje")
 mesh = SubResource("PrismMesh_mtw3f")
 skeleton = NodePath("../MeshInstance3D4")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="MeshInstance3D"]
 transform = Transform3D(-1, -4.37114e-08, -2.98023e-08, -4.37114e-08, 1, 0, 2.98023e-08, 8.88178e-16, -1, 1.30134e-07, -2.97712, 0)
+layers = 2
+material_override = ExtResource("3_3fxje")
 mesh = SubResource("PrismMesh_mtw3f")
 skeleton = NodePath("../MeshInstance3D4")
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(0.939648, 0.342004, 0.00980861, -0.34202, 0.939693, -1.71555e-08, -0.00921708, -0.00335472, 0.999952, -0.52886, 4.79553, 1.86502e-07)
+mesh = SubResource("SphereMesh_vsdj2")
+
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
 current = true
+near = 10.0
 script = SubResource("GDScript_yqvit")
 
-[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
-transform = Transform3D(-1, -8.74228e-08, 0, 8.74228e-08, -1, 0, 0, 0, 1, -6.97746, 3.04995e-07, 0)
-amount = 500
-lifetime = 0.55
-explosiveness = 0.08
-randomness = 1.0
-lifetime_randomness = 0.3
-fract_delta = false
-mesh = SubResource("PointMesh_38m0o")
-emission_shape = 6
-emission_ring_axis = Vector3(1, 0, 0)
-emission_ring_height = 0.0
-emission_ring_radius = 0.485
-emission_ring_inner_radius = 0.225
-particle_flag_align_y = true
-spread = 25.74
-gravity = Vector3(0, 0, 0)
-initial_velocity_min = 53.28
-initial_velocity_max = 53.28
-script = SubResource("GDScript_2huht")
+[node name="Gun" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.482551, 4.51484, -0.229239)
+script = ExtResource("3_ayxod")
+cooldown_time = 0.205
 
-[node name="SpotLight3D" type="SpotLight3D" parent="CPUParticles3D"]
-transform = Transform3D(-4.37114e-08, -4.37114e-08, -1, -4.37114e-08, 1, -4.37114e-08, 1, 4.37114e-08, -4.37114e-08, 0, 0, 0)
-light_energy = 16.0
-spot_range = 25.5214
-spot_angle = 25.0572
+[node name="Timer" type="Timer" parent="Gun"]
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Gun"]
+mesh = SubResource("CylinderMesh_2y68j")
+
+[node name="projectile_spawn_point" type="MeshInstance3D" parent="Gun/MeshInstance3D"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = SubResource("GDScript_65l02")
+
+[node name="Wepons" type="Node3D" parent="."]
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="Wepons"]
+transform = Transform3D(0.734524, 0.678583, 0, -0.678583, 0.734524, 0, 0, 0, 1, -0.0989494, -20.7843, 7.07388)
 visible = false
-amount = 500
-lifetime = 0.74
-explosiveness = 0.03
-randomness = 0.2
+size = Vector3(41.8624, 7.76978, 40.9887)
+
+[node name="thruster" type="Area3D" parent="."]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
+script = ExtResource("4_ubfvq")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="thruster"]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
+top_level = true
+amount = 1000
+lifetime = 2.0
+randomness = 1.0
 fixed_fps = 60
 interpolate = false
 fract_delta = false
-process_material = SubResource("ParticleProcessMaterial_yiojq")
-draw_pass_1 = SubResource("PointMesh_38m0o")
-script = SubResource("GDScript_54o8m")
+visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
+draw_order = 2
+process_material = SubResource("ParticleProcessMaterial_e3xkk")
+draw_pass_1 = SubResource("SphereMesh_6mc63")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="thruster/GPUParticles3D"]
+visible = false
+mesh = SubResource("SphereMesh_7y3pv")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.76665, 2.84217e-14)
+visible = false
+light_color = Color(1, 0.647059, 0.321569, 1)
+light_energy = 40.0
+light_indirect_energy = 16.0
+light_cull_mask = 4294967293
+shadow_enabled = true
+omni_range = 50.0
+omni_attenuation = 1.406
+script = SubResource("GDScript_pojkl")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.69765, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle_attenuation = 0.353554
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.38214, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle = 61.6
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5.90792, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 150.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 150.0
+spot_angle = 25.0
+script = SubResource("GDScript_30xwn")
+
+[node name="mouse" type="Node3D" parent="."]
+top_level = true
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 2.98023e-08, -1, 0, 1, 2.98023e-08, 0, 1.41856, -0.923744)
+light_energy = 100.0
+spot_range = 250.0
+spot_angle = 16.2727
+
+[connection signal="timeout" from="Gun/Timer" to="Gun" method="_on_timer_timeout"]

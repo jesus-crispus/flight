@@ -7,3 +7,5 @@ class_name ShipResource
 @export var throttle: float 
 @export var engine_shift_speed: float
 @export var thrust: float
+@export var max_health: float
+var curent_health: float = max_health

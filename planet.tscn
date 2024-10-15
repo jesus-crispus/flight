@@ -1,33 +1,63 @@
 [gd_scene load_steps=3 format=3 uid="uid://qknpp4ibwnnh"]
 
 [sub_resource type="GDScript" id="GDScript_vrglm"]
-script/source = "extends CSGSphere3D
+script/source = "#@tool
+extends CSGSphere3D
 
 class_name Planet
 
+@export var planet_radius: float
+@export var planet_gravity_well_radius: float
+@export var gravity: float
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
-
+	radius = planet_radius
+	%CollisionShape3D.shape.radius = planet_gravity_well_radius
+	%GPUParticlesAttractorSphere3D.radius = planet_gravity_well_radius
+	$GPUParticlesCollisionSphere3D.radius = planet_radius - 1
+	$Area3D.gravity = gravity
+	$Area3D.gravity_point_unit_distance = planet_radius
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	pass                                         
+
+
+
+#func _on_property_list_changed() -> void:
+	#radius = planet_radius
+	#%CollisionShape3D.shape.radius = planet_gravity_well_radius
+	#%GPUParticlesAttractorSphere3D.radius = planet_gravity_well_radius
+	#$GPUParticlesCollisionSphere3D.radius = planet_radius - 1
 "
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_v7uxn"]
-radius = 177.367
+radius = 1000.0
 
 [node name="planet" type="CSGSphere3D"]
+use_collision = true
 radius = 20.0
 radial_segments = 20
 rings = 10
 script = SubResource("GDScript_vrglm")
+planet_radius = 20.0
+planet_gravity_well_radius = 100.0
 
 [node name="Area3D" type="Area3D" parent="."]
 gravity_space_override = 3
 gravity_point = true
+gravity = 20.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+unique_name_in_owner = true
 shape = SubResource("SphereShape3D_v7uxn")
+
+[node name="GPUParticlesCollisionSphere3D" type="GPUParticlesCollisionSphere3D" parent="."]
+
+[node name="GPUParticlesAttractorSphere3D" type="GPUParticlesAttractorSphere3D" parent="."]
+unique_name_in_owner = true
+attenuation = 0.31864
+radius = 0.01
+
+[connection signal="property_list_changed" from="." to="." method="_on_property_list_changed"]

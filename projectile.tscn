@@ -1,0 +1,61 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjyqn7jauhr3h"]
+
+[sub_resource type="GDScript" id="GDScript_vnrdo"]
+script/source = "extends RigidBody3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass
+	#print(self.basis.y)
+
+
+func reset():
+	pass
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func _on_arming_timer_timeout() -> void:
+	$CollisionShape3D.set_disabled(false)
+
+
+
+
+func _on_despawn_timer_timeout() -> void:
+	queue_free()
+"
+
+[sub_resource type="SphereMesh" id="SphereMesh_1pdr4"]
+radius = 0.1
+is_hemisphere = true
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_d4rcv"]
+
+[node name="Projectile" type="RigidBody3D"]
+top_level = true
+collision_layer = 8
+collision_mask = 6
+continuous_cd = true
+script = SubResource("GDScript_vnrdo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_1pdr4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_d4rcv")
+disabled = true
+
+[node name="ArmingTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+autostart = true
+
+[node name="DespawnTimer" type="Timer" parent="."]
+wait_time = 2.0
+
+[connection signal="timeout" from="ArmingTimer" to="." method="_on_arming_timer_timeout"]
+[connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]
