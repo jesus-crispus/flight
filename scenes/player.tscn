@@ -214,7 +214,7 @@ func update_range(throttle: float) -> void:
 		light_energy = 0   
 	
 	
-	spot_angle = angle - (throttle * 20)
+	#spot_angle = angle - (throttle * 20)
 	
 "
 
@@ -317,9 +317,12 @@ script = ExtResource("4_ubfvq")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster"]
 stream = ExtResource("6_b6y4e")
-volume_db = 60.622
-autoplay = true
 parameters/looping = true
+
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="thruster"]
+volume_db = 80.0
+pitch_scale = 4.0
+autoplay = true
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="thruster"]
 process_priority = 1

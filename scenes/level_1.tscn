@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
-[ext_resource type="PackedScene" uid="uid://crt65xu8olf50" path="res://scenes/player.tscn" id="3_ah2ph"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
+[ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
 noise_type = 5
@@ -264,7 +264,7 @@ operation = 2
 size = Vector3(37.0229, 148.234, 72.56)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.07948, 10.7429, -3.23688)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.079, 10.743, -67.197)
 mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
@@ -289,9 +289,8 @@ omni_attenuation = 0.5
 [node name="start_pad" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
 
-[node name="RigidBody3D" parent="start_pad" instance=ExtResource("3_ah2ph")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1692.28, 0)
-top_level = true
+[node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1691.91, 0)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="start_pad"]
 
@@ -445,6 +444,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="PuaseMenu" type="PanelContainer" parent="Ui"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4

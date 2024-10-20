@@ -25,7 +25,7 @@ func _process(delta: float) -> void:
 		
 		#particle_system.emitting = ship_resourse.engine_on_off
 		
-		$OmniLight3D.update_range(throttle)
+		#$OmniLight3D.update_range(throttle)
 		$SpotLight3D.update_range(throttle)
 		$SpotLight3D2.update_range(throttle)
 		$SpotLight3D3.update_range(throttle)

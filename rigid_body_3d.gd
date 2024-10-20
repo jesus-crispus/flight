@@ -79,7 +79,7 @@ func main_engine():
 		throttle += engine_shift_speed * physics_process_delta
 	
 	elif throttle != 0:
-		throttle += -(engine_shift_speed*3) * physics_process_delta
+		throttle += -(engine_shift_speed * 3) * physics_process_delta
 	
 	throttle = clampf(throttle ,0 ,1)
 	ship_resourse.throttle = throttle
