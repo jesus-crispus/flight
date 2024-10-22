@@ -46,7 +46,7 @@ func _input(event: InputEvent) -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
-	#var throttle_axis = Input.get_axis("throttle_down", "throttle_up")
+	#var throttle_afxis = Input.get_axis("throttle_down", "throttle_up")
 	#
 	#if throttle_axis:
 		#

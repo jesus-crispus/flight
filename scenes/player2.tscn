@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=55 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
@@ -175,6 +175,126 @@ func update_range(throttle: float) -> void:
 	
 "
 
+[sub_resource type="Shader" id="Shader_wqp1d"]
+code = "shader_type spatial;
+render_mode cull_disabled;
+
+
+uniform sampler2D image : source_color;
+
+float discard_integer(float input){
+	
+	float output = ((10000.0 * input) - float(10000 * int(input))) / 10000.0;
+	
+	return output;
+}
+
+float random_number_generator(vec3 vector, float range_start, float range_end){
+	
+	float time = discard_integer(TIME);
+
+	
+	float number1 = time / 4573.62426;
+	float number2 = time * 87237.233;
+	float number3 = time /72.383 * PI;
+	
+	
+	//float random_base = number1  * number2 / number3;
+	
+	
+	float position1 = discard_integer(vector.x) * number1 -12.845;
+	float position2 = discard_integer(vector.y) / 52.9 + number2;
+	float position3 = discard_integer(vector.z) * position2  + number3;
+	
+	float random_base2 = position1 * position2 / position3 + position3 - position1;
+	
+	float random_number = abs(discard_integer(random_base2));
+	
+	
+	float output = random_number  * (range_end - range_start) + range_start;
+	
+	return output;
+}
+
+
+
+
+
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+	
+	//vec3 start = normalize(VERTEX - vec3(0,0,125));
+	
+	//(VERTEX.z + 125.0)/250.0;
+	COLOR.w = (VERTEX.y + 125.0) / 250.0;
+	//COLOR.b = ((VERTEX.y  + 125.0)/ 250.0);
+	
+	//COLOR.r = 0.0;
+	//COLOR.g = 0.0;
+	//COLOR.xyz = start;
+	
+	COLOR.xyz = vec3(1,1,1);
+	//VERTEX.x = TIME ;
+	
+}
+
+void fragment() {
+	
+	
+	//ALBEDO = COLOR.rgb;
+	ALBEDO = vec3(0,0,0);
+	ALPHA = clamp(1.0 -(COLOR.w),0.0,1) ;
+	
+	//ALPHA_HASH_SCALE = (((1000.0 * TIME) - float(1000 * int(TIME))) / 1000.0) * ALPHA;
+	ALPHA = random_number_generator(FRAGCOORD.xyz, 0.2 , 0.5) * ALPHA;
+	
+	(EMISSION = COLOR.rgb * 100.0) * ALPHA ;
+	//EMISSION = vec3(random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0));
+	
+	
+
+	
+	
+	//EMISSION = COLOR.rgb * 1.0 ;
+	//ALPHA_HASH_SCALE = ALPHA;
+	//ALPHA_HASH_SCALE = random_number_generator(FRAGCOORD.xyz);
+	
+	// Called for every pixel the material is visible on.
+}
+
+
+
+
+
+
+
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_74adf"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2sk7k"]
+seamless = true
+noise = SubResource("FastNoiseLite_74adf")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_liity"]
+render_priority = 0
+shader = SubResource("Shader_wqp1d")
+shader_parameter/image = SubResource("NoiseTexture2D_2sk7k")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_uk5n2"]
+material = SubResource("ShaderMaterial_liity")
+top_radius = 17.304
+bottom_radius = 0.0
+height = 250.0
+cap_top = false
+cap_bottom = false
+
 [sub_resource type="SphereMesh" id="SphereMesh_uhqc2"]
 height = 0.73
 
@@ -244,7 +364,12 @@ rim_enabled = true
 material = SubResource("StandardMaterial3D_tywdh")
 height = 1.985
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ph5jh"]
+cull_mode = 2
+backlight = Color(2.45467e-06, 0.500774, 0.470374, 1)
+
 [sub_resource type="QuadMesh" id="QuadMesh_ein4f"]
+material = SubResource("StandardMaterial3D_ph5jh")
 size = Vector2(55, 55)
 
 [node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
@@ -338,6 +463,7 @@ process_material = SubResource("ParticleProcessMaterial_e3xkk")
 draw_pass_1 = SubResource("SphereMesh_6mc63")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="thruster/GPUParticles3D"]
+visible = false
 mesh = SubResource("SphereMesh_7y3pv")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster"]
@@ -409,6 +535,7 @@ process_material = SubResource("ParticleProcessMaterial_e3xkk")
 draw_pass_1 = SubResource("SphereMesh_6mc63")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="thruster2/GPUParticles3D"]
+visible = false
 mesh = SubResource("SphereMesh_7y3pv")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
@@ -447,18 +574,28 @@ script = SubResource("GDScript_30xwn")
 top_level = true
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(0.987397, -0.0791308, 0.137058, 0.158262, 0.493699, -0.855111, -1.0334e-09, 0.866025, 0.5, 20, 2.015, 0)
-light_energy = 100.0
+transform = Transform3D(0.996196, -0.0791311, -0.0364831, 0.00736925, 0.493699, -0.869602, 0.0868242, 0.866025, 0.492404, 1, 2, 0)
+light_energy = 1000.0
+shadow_bias = 0.075
 spot_range = 250.0
-spot_attenuation = 0.1
+spot_attenuation = 2.0
 spot_angle = 4.03
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 0.665078, -126)
+mesh = SubResource("CylinderMesh_uk5n2")
+
 [node name="SpotLight3D2" type="SpotLight3D" parent="."]
-transform = Transform3D(0.987381, 0.0799579, -0.136693, -0.158358, 0.493229, -0.855364, -0.000972033, 0.866217, 0.499667, -20, 2.06, 0.013)
-light_energy = 100.0
+transform = Transform3D(0.996436, 0.0799577, 0.0268597, -0.0161338, 0.493229, -0.86975, -0.0827912, 0.866217, 0.492761, -1, 2, 0)
+light_energy = 1000.0
+shadow_bias = 0.075
 spot_range = 250.0
-spot_attenuation = 0.1
+spot_attenuation = 2.0
 spot_angle = 4.03
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -126)
+mesh = SubResource("CylinderMesh_uk5n2")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0675079, 1.21853)
@@ -539,7 +676,7 @@ transform = Transform3D(1, 0, 0, 0, 0.995954, 0.0898678, 0, -0.0898678, 0.995954
 mesh = SubResource("SphereMesh_so1lr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.552926, -0.83323, 0, 0.83323, 0.552926, 0, 129.701, -80.3241)
+transform = Transform3D(1, 0, 0, 0, 0.552926, -0.83323, 0, 0.83323, 0.552926, 0, 134.161, -83.2839)
 visible = false
 mesh = SubResource("QuadMesh_ein4f")
 

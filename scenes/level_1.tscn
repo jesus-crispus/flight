@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=46 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
@@ -72,8 +72,86 @@ shape = 0
 size = 4.02
 curve = SubResource("Curve_vtjbv")
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jsjxk"]
+noise_type = 2
+frequency = 0.0044
+cellular_return_type = 3
+domain_warp_type = 1
+domain_warp_frequency = 0.004
+domain_warp_fractal_octaves = 10
+domain_warp_fractal_gain = 1.41
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qg64r"]
+width = 2000
+height = 2000
+seamless = true
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7noj"]
+width = 2000
+height = 2000
+seamless = true
+as_normal_map = true
+bump_strength = 50.0
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="Gradient" id="Gradient_eyeai"]
+offsets = PackedFloat32Array(0.00534759, 0.125668, 0.240642, 0.355615, 0.518717, 0.663102, 0.796791, 0.983957)
+colors = PackedColorArray(0.65, 0.169, 0.169, 1, 0.65, 0.33735, 0.169, 1, 0.65, 0.633967, 0.169, 1, 0.4576, 0.65, 0.169, 1, 0.169, 0.65, 0.353383, 1, 0.169, 0.609917, 0.65, 1, 0.169, 0.19305, 0.65, 1, 0.65, 0, 0.639166, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wdul1"]
+noise_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xso74"]
+seamless = true
+color_ramp = SubResource("Gradient_eyeai")
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="Gradient" id="Gradient_8wpif"]
+offsets = PackedFloat32Array(0, 0.470588, 0.997326)
+colors = PackedColorArray(0, 0, 0, 1, 0.108721, 0.108721, 0.108721, 1, 0.174028, 0.174028, 0.174028, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_264ir"]
+seamless = true
+color_ramp = SubResource("Gradient_8wpif")
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_namg0"]
+seamless = true
+as_normal_map = true
+bump_strength = 32.0
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_armlv"]
+width = 2000
+height = 2000
+seamless = true
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tapvg"]
+albedo_color = Color(0.264383, 0.340383, 0.375796, 1)
+albedo_texture = SubResource("NoiseTexture2D_qg64r")
+roughness = 0.54
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_r7noj")
+clearcoat_roughness = 0.0
+anisotropy = 0.32
+anisotropy_flowmap = SubResource("NoiseTexture2D_r7noj")
+heightmap_enabled = true
+heightmap_deep_parallax = true
+heightmap_min_layers = 16
+heightmap_max_layers = 32
+heightmap_texture = SubResource("NoiseTexture2D_armlv")
+subsurf_scatter_enabled = true
+subsurf_scatter_strength = 1.0
+backlight = Color(0.741385, 0.741385, 0.741385, 1)
+detail_mask = SubResource("NoiseTexture2D_264ir")
+detail_albedo = SubResource("NoiseTexture2D_xso74")
+detail_normal = SubResource("NoiseTexture2D_namg0")
+uv1_scale = Vector3(2.5, 12.5, 0.25)
+
 [sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
-material = SubResource("StandardMaterial3D_hkjni")
+material = SubResource("StandardMaterial3D_tapvg")
 size = Vector2(1000, 5000)
 subdivide_width = 10
 subdivide_depth = 50
@@ -180,13 +258,17 @@ background_mode = 2
 sky = SubResource("Sky_mgkrf")
 tonemap_mode = 3
 tonemap_exposure = 0.59
-fog_enabled = true
+glow_enabled = true
+glow_bloom = 0.04
+glow_blend_mode = 1
+glow_hdr_threshold = 0.0
+glow_hdr_scale = 1.0
 fog_light_color = Color(0.140262, 0.156196, 0.181246, 1)
-volumetric_fog_density = 0.04
-volumetric_fog_albedo = Color(0.76993, 0.69254, 0.781266, 1)
+fog_density = 0.0
+volumetric_fog_enabled = true
+volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
 volumetric_fog_emission = Color(0.0562916, 0.0562916, 0.0562916, 1)
-volumetric_fog_anisotropy = 0.86
-volumetric_fog_detail_spread = 0.901251
+volumetric_fog_emission_energy = 0.0
 
 [sub_resource type="GDScript" id="GDScript_ukgk2"]
 script/source = "extends DirectionalLight3D
@@ -222,6 +304,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -254.794, 639.203, 0)
 
 [node name="planet5" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2000, 0)
+visible = false
 radius = 300.0
 radial_segments = 100
 rings = 50
@@ -230,6 +313,7 @@ planet_gravity_well_radius = 1000.0
 gravity = 80.0
 
 [node name="Area3D" parent="CSGCombiner3D/planet5" index="0"]
+visible = false
 collision_layer = 3
 collision_mask = 3
 gravity_point_unit_distance = 300.0
@@ -237,14 +321,17 @@ gravity = 1000.0
 
 [node name="GPUParticlesCollisionSphere3D" parent="CSGCombiner3D/planet5" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.796967, 0, 0.0411682)
+visible = false
 cull_mask = 4294967287
 
 [node name="GPUParticlesAttractorSphere3D" parent="CSGCombiner3D/planet5" index="2"]
+visible = false
 cull_mask = 4294967287
 radius = 1000.0
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="CSGCombiner3D/planet5"]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
+visible = false
 layers = 4
 amount = 1000
 visibility_aabb = AABB(-995.815, -1001.89, -3.21294, 1994.57, 1998.3, 6.42588)
@@ -264,7 +351,7 @@ operation = 2
 size = Vector3(37.0229, 148.234, 72.56)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.079, 10.743, -67.197)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.864, 10.812, -46.422)
 mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
@@ -290,7 +377,8 @@ omni_attenuation = 0.5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
 
 [node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1691.91, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0575333, -1691.91, -0.0123825)
+gravity_scale = 0.93
 
 [node name="StaticBody3D" type="StaticBody3D" parent="start_pad"]
 
@@ -484,7 +572,7 @@ environment = SubResource("Environment_rdba1")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.67462)
 light_color = Color(0.961667, 0.9, 1, 1)
-light_energy = 2.0
+shadow_enabled = true
 script = SubResource("GDScript_ukgk2")
 
 [connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
