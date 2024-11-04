@@ -1,0 +1,102 @@
+[gd_resource type="Shader" format=3 uid="uid://drxgbvl7lrgu1"]
+
+[resource]
+code = "shader_type spatial;
+render_mode cull_disabled;
+
+
+uniform sampler2D image : source_color;
+
+float discard_integer(float input){
+
+	float output = ((10000.0 * input) - float(10000 * int(input))) / 10000.0;
+
+	return output;
+}
+
+float random_number_generator(vec3 vector, float range_start, float range_end){
+
+	float time = discard_integer(TIME);
+
+
+	float number1 = time / 4573.62426;
+	float number2 = time * 87237.233;
+	float number3 = time /72.383 * PI;
+
+
+	//float random_base = number1  * number2 / number3;
+
+
+	float position1 = discard_integer(vector.x) * number1 -12.845;
+	float position2 = discard_integer(vector.y) / 52.9 + number2;
+	float position3 = discard_integer(vector.z) * position2  + number3;
+
+	float random_base2 = position1 * position2 / position3 + position3 - position1;
+
+	float random_number = abs(discard_integer(random_base2));
+
+
+	float output = random_number  * (range_end - range_start) + range_start;
+
+	return output;
+}
+
+
+
+
+
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+
+	//vec3 start = normalize(VERTEX - vec3(0,0,125));
+
+	//(VERTEX.z + 125.0)/250.0;
+	COLOR.w = (VERTEX.y + 125.0) / 250.0;
+	//COLOR.b = ((VERTEX.y  + 125.0)/ 250.0);
+
+	//COLOR.r = 0.0;
+	//COLOR.g = 0.0;
+	//COLOR.xyz = start;
+
+	COLOR.xyz = vec3(1,1,1);
+	//VERTEX.x = TIME ;
+
+}
+
+void fragment() {
+
+
+	//ALBEDO = COLOR.rgb;
+	ALBEDO = vec3(0,0,0);
+	ALPHA = clamp(1.0 -(COLOR.w),0.0,1) ;
+
+	//ALPHA_HASH_SCALE = (((1000.0 * TIME) - float(1000 * int(TIME))) / 1000.0) * ALPHA;
+	ALPHA = random_number_generator(FRAGCOORD.xyz, 0.5 , 0.9) * ALPHA;
+
+	(EMISSION = COLOR.rgb * 10.0) * ALPHA ;
+	//EMISSION = vec3(random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0));
+
+
+
+
+
+	//EMISSION = COLOR.rgb * 1.0 ;
+	//ALPHA_HASH_SCALE = ALPHA;
+	//ALPHA_HASH_SCALE = random_number_generator(FRAGCOORD.xyz);
+
+	// Called for every pixel the material is visible on.
+}
+
+
+
+
+
+
+
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"

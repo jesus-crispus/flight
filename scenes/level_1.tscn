@@ -1,9 +1,10 @@
-[gd_scene load_steps=46 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=49 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
 [ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
+[ext_resource type="Texture2D" uid="uid://b4l5p6srhnj6m" path="res://icon.svg" id="5_m1u73"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
 noise_type = 5
@@ -82,8 +83,8 @@ domain_warp_fractal_octaves = 10
 domain_warp_fractal_gain = 1.41
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qg64r"]
-width = 2000
-height = 2000
+width = 1000
+height = 1000
 seamless = true
 noise = SubResource("FastNoiseLite_jsjxk")
 
@@ -123,8 +124,8 @@ bump_strength = 32.0
 noise = SubResource("FastNoiseLite_wdul1")
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_armlv"]
-width = 2000
-height = 2000
+width = 1000
+height = 1000
 seamless = true
 noise = SubResource("FastNoiseLite_jsjxk")
 
@@ -266,6 +267,7 @@ glow_hdr_scale = 1.0
 fog_light_color = Color(0.140262, 0.156196, 0.181246, 1)
 fog_density = 0.0
 volumetric_fog_enabled = true
+volumetric_fog_density = 0.0205
 volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
 volumetric_fog_emission = Color(0.0562916, 0.0562916, 0.0562916, 1)
 volumetric_fog_emission_energy = 0.0
@@ -283,6 +285,63 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	rotate_y(0.1 * delta)
 "
+
+[sub_resource type="Shader" id="Shader_2oeqo"]
+code = "shader_type canvas_item;
+
+uniform vec2 size = vec2(16.0, 14.0);
+// If you intend to read from mipmaps with `textureLod()` LOD values greater than `0.0`,
+// use `filter_nearest_mipmap` instead. This shader doesn't require it.
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+
+
+const float range_start = 0.5;
+const float range_end = 1.1;
+
+
+uint hash( uint x ) {
+    x += ( x << 10u );
+    x ^= ( x >>  6u );
+    x += ( x <<  3u );
+    x ^= ( x >> 11u );
+    x += ( x << 15u );
+    return x;
+}
+
+uint hash2( uvec3 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z)             ); }
+
+float floatConstruct( uint m ) {
+    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
+    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
+
+    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
+    m |= ieeeOne;                          // Add fractional part to 1.0
+
+    float  f = uintBitsToFloat( m );       // Range [1:2]
+    return f - 1.0;                        // Range [0:1]
+}
+
+
+float random( vec3  v ) { return floatConstruct(hash2(floatBitsToUint(v))); }
+
+
+
+
+void fragment() {
+	vec3  inputs = vec3( SCREEN_UV.xy, TIME );
+	
+	float random_number = random(inputs) * (range_end - range_start) + range_start ;
+	 
+	vec4 color = textureLod(screen_texture, SCREEN_UV ,1.0) * vec4(1,1,1,1);
+	
+	COLOR = vec4(color.xyz * random_number, color.w);
+	 
+	
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5uktp"]
+shader = SubResource("Shader_2oeqo")
+shader_parameter/size = Vector2(32, 28)
 
 [node name="Level1" type="Node3D"]
 script = ExtResource("1_07gk5")
@@ -367,7 +426,6 @@ shape = SubResource("SphereShape3D_04y04")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objective"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.112831, -3.99997, 57.4179)
-light_color = Color(0.8, 1, 0.2, 1)
 light_energy = 100.0
 shadow_enabled = true
 omni_range = 500.0
@@ -574,6 +632,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.67462)
 light_color = Color(0.961667, 0.9, 1, 1)
 shadow_enabled = true
 script = SubResource("GDScript_ukgk2")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_m1u73")
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_5uktp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
 [connection signal="property_list_changed" from="objective" to="objective" method="_on_property_list_changed"]

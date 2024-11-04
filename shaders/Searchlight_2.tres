@@ -1,0 +1,163 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://ctk7pt6rxo1be"]
+
+[sub_resource type="Shader" id="Shader_wqp1d"]
+code = "shader_type spatial;
+render_mode shadows_disabled, unshaded;
+//, cull_disabled
+
+uniform sampler2D image : source_color;
+
+uint hash( uint x ) {
+    x += ( x << 10u );
+    x ^= ( x >>  6u );
+    x += ( x <<  3u );
+    x ^= ( x >> 11u );
+    x += ( x << 15u );
+    return x;
+}
+
+uint hash2( uvec3 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z)             ); }
+
+float floatConstruct( uint m ) {
+    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
+    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
+
+    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
+    m |= ieeeOne;                          // Add fractional part to 1.0
+
+    float  f = uintBitsToFloat( m );       // Range [1:2]
+    return f - 1.0;                        // Range [0:1]
+}
+
+
+float random( vec3  v ) { return floatConstruct(hash2(floatBitsToUint(v))); }
+
+
+
+
+const float light_energy = 10.0;
+const float cone_angle =  radians(10.0 *2.0);
+const vec3 cone_origin = vec3(0,500,0);
+const float cone_hieght_offset = float(-500);
+
+
+
+varying mat4 modelview_matrix;
+varying vec3 camera_position;
+varying vec3 local_normals;
+varying vec3 position;
+varying float distance_to_cone_origin;
+
+
+//const float attenuation = 2.0;
+
+void vertex() {
+
+	position = vec3(VERTEX.x, VERTEX.y, VERTEX.z) + cone_origin;
+
+	local_normals = NORMAL;
+
+	distance_to_cone_origin = distance(VERTEX, cone_origin);
+
+	modelview_matrix = MODELVIEW_MATRIX ;
+
+	//camera_position = CAMERA_POSITION_WORLD * ;
+
+	// Called for every vertex the material is visible on.
+
+	//vec3 start = normalize(VERTEX - vec3(0,0,125));
+
+	//distance_traveled = ((VERTEX.y - 500.0));//light_energy;
+	//distance_traveled  = VERTEX.y;
+
+	//COLOR.w = light_energy * (inversesqrt(distance_traveled));// - (distance_traveled * attenuation) ;// * (light_energy * 2.0) ;
+	//COLOR.b = ((VERTEX.y  + 125.0)/ 250.0);
+
+	//COLOR.xyz = VIEW//NORMAL * (distance_traveled * 0.001);
+	//COLOR.g = 0.0;
+	//COLOR.w = (light_energy - ((distance_traveled * 2.0) * light_energy)));
+
+	COLOR.xyz = vec3(1.0,1.0,1.0);
+	//VERTEX.x = TIME ;
+	//COLOR.xyz = NORMAL;
+	//NORMAL = COLOR.xyz;
+	//varying float intensity;
+	//const out float intensity;
+
+}
+
+void fragment() {
+
+
+	float random_number = random(vec3( FRAGCOORD.xy, TIME ));
+
+
+	//vec3 bob =  abs(NORMAL - vec3(0,0,1));//COLOR.rgb;
+	//float bob2 = bob.x + bob.y + bob.z;
+	float depth_x = abs(NORMAL.x);
+	float depth_y = (abs(NORMAL.y));
+	float depth_z = ((NORMAL.z - 0.5));
+
+
+	vec4 local_view =  (vec4(VIEW,1) * modelview_matrix);
+
+
+	vec4 bob = modelview_matrix * vec4(VIEW,1);
+
+	vec3 cone_angle_vector = (normalize(position)) * vec3(-1,1,-1);
+
+
+	float angle = 1.0 - dot(VIEW,(cone_angle_vector * vec3(1,-1,1)));
+
+
+	float unknown_angle = PI - cone_angle - cone_angle;
+
+
+
+	float distance_traveld_through_volume = sin(cone_angle) * (distance_to_cone_origin/ sin(unknown_angle));
+
+	vec2 direction_to_middle = normalize(vec2(position.x, position.z));
+
+	vec3 forward_direction = normalize(abs(vec3(local_view.x,local_view.y,local_view.z)));
+
+	float scalar = dot(forward_direction, abs(vec3(direction_to_middle.x,0,direction_to_middle.y)));
+
+	//distance_traveld_through_volume = distance_traveld_through_volume * scalar;
+
+
+	//vec4 test =
+	//modelview_matrix vCOLOR.xyz
+	//ALBEDO =  vec4( modelview_matrix * vec4(VIEW,0)).xyz ;// VIEW.xyz * distance_traveld_through_volume/1000.0;//bob.xyz ;
+
+	ALPHA = (distance_traveld_through_volume/1000.0) * inversesqrt(distance_to_cone_origin) * light_energy;
+
+	//ALBEDO.x = (distance_traveld_through_volume/1000.0) * 0.5;
+	//ALBEDO.y = (distance_traveld_through_volume/1000.0) * 0.5;
+	//ALBEDO.z = (distance_traveld_through_volume/1000.0) * 0.5;
+
+	// Called for every pixel the material is visible on.
+}
+
+
+
+
+
+
+
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_74adf"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2sk7k"]
+seamless = true
+noise = SubResource("FastNoiseLite_74adf")
+
+[resource]
+render_priority = 0
+shader = SubResource("Shader_wqp1d")
+shader_parameter/image = SubResource("NoiseTexture2D_2sk7k")

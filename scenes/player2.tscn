@@ -1,9 +1,10 @@
-[gd_scene load_steps=55 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=56 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
 [ext_resource type="Script" path="res://gun.gd" id="4_8w4ri"]
 [ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
+[ext_resource type="Material" uid="uid://ctk7pt6rxo1be" path="res://shaders/Searchlight_2.tres" id="6_dda6t"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
@@ -175,125 +176,19 @@ func update_range(throttle: float) -> void:
 	
 "
 
-[sub_resource type="Shader" id="Shader_wqp1d"]
-code = "shader_type spatial;
-render_mode cull_disabled;
-
-
-uniform sampler2D image : source_color;
-
-float discard_integer(float input){
-	
-	float output = ((10000.0 * input) - float(10000 * int(input))) / 10000.0;
-	
-	return output;
-}
-
-float random_number_generator(vec3 vector, float range_start, float range_end){
-	
-	float time = discard_integer(TIME);
-
-	
-	float number1 = time / 4573.62426;
-	float number2 = time * 87237.233;
-	float number3 = time /72.383 * PI;
-	
-	
-	//float random_base = number1  * number2 / number3;
-	
-	
-	float position1 = discard_integer(vector.x) * number1 -12.845;
-	float position2 = discard_integer(vector.y) / 52.9 + number2;
-	float position3 = discard_integer(vector.z) * position2  + number3;
-	
-	float random_base2 = position1 * position2 / position3 + position3 - position1;
-	
-	float random_number = abs(discard_integer(random_base2));
-	
-	
-	float output = random_number  * (range_end - range_start) + range_start;
-	
-	return output;
-}
-
-
-
-
-
-
-void vertex() {
-	// Called for every vertex the material is visible on.
-	
-	//vec3 start = normalize(VERTEX - vec3(0,0,125));
-	
-	//(VERTEX.z + 125.0)/250.0;
-	COLOR.w = (VERTEX.y + 125.0) / 250.0;
-	//COLOR.b = ((VERTEX.y  + 125.0)/ 250.0);
-	
-	//COLOR.r = 0.0;
-	//COLOR.g = 0.0;
-	//COLOR.xyz = start;
-	
-	COLOR.xyz = vec3(1,1,1);
-	//VERTEX.x = TIME ;
-	
-}
-
-void fragment() {
-	
-	
-	//ALBEDO = COLOR.rgb;
-	ALBEDO = vec3(0,0,0);
-	ALPHA = clamp(1.0 -(COLOR.w),0.0,1) ;
-	
-	//ALPHA_HASH_SCALE = (((1000.0 * TIME) - float(1000 * int(TIME))) / 1000.0) * ALPHA;
-	ALPHA = random_number_generator(FRAGCOORD.xyz, 0.2 , 0.5) * ALPHA;
-	
-	(EMISSION = COLOR.rgb * 100.0) * ALPHA ;
-	//EMISSION = vec3(random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0),random_number_generator(FRAGCOORD.xyz, 0.0 , 1.0));
-	
-	
-
-	
-	
-	//EMISSION = COLOR.rgb * 1.0 ;
-	//ALPHA_HASH_SCALE = ALPHA;
-	//ALPHA_HASH_SCALE = random_number_generator(FRAGCOORD.xyz);
-	
-	// Called for every pixel the material is visible on.
-}
-
-
-
-
-
-
-
-
-//void light() {
-	// Called for every pixel for every light affecting the material.
-	// Uncomment to replace the default light processing function with this one.
-//}
-"
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_74adf"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2sk7k"]
-seamless = true
-noise = SubResource("FastNoiseLite_74adf")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_liity"]
-render_priority = 0
-shader = SubResource("Shader_wqp1d")
-shader_parameter/image = SubResource("NoiseTexture2D_2sk7k")
-
 [sub_resource type="CylinderMesh" id="CylinderMesh_uk5n2"]
-material = SubResource("ShaderMaterial_liity")
-top_radius = 17.304
-bottom_radius = 0.0
-height = 250.0
+material = ExtResource("6_dda6t")
+uv2_padding = 2.35
+top_radius = 0.0
+bottom_radius = 176.327
+height = 1000.0
+rings = 0
 cap_top = false
 cap_bottom = false
+
+[sub_resource type="SphereMesh" id="SphereMesh_dd77f"]
+radius = 25.0
+height = 50.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_uhqc2"]
 height = 0.73
@@ -370,7 +265,21 @@ backlight = Color(2.45467e-06, 0.500774, 0.470374, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_ein4f"]
 material = SubResource("StandardMaterial3D_ph5jh")
-size = Vector2(55, 55)
+size = Vector2(100, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_in2eq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hsp3l"]
+next_pass = SubResource("StandardMaterial3D_in2eq")
+cull_mode = 1
+shading_mode = 0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mriol"]
+material = SubResource("StandardMaterial3D_hsp3l")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 5.0
+cap_top = false
 
 [node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
 top_level = true
@@ -398,9 +307,8 @@ shape = SubResource("ConvexPolygonShape3D_o56j1")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64.8395)
 current = true
-near = 10.0
 script = SubResource("GDScript_yqvit")
 
 [node name="Gun" type="Node3D" parent="."]
@@ -574,27 +482,42 @@ script = SubResource("GDScript_30xwn")
 top_level = true
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(0.996196, -0.0791311, -0.0364831, 0.00736925, 0.493699, -0.869602, 0.0868242, 0.866025, 0.492404, 1, 2, 0)
-light_energy = 1000.0
+transform = Transform3D(0.996196, -0.0791312, -0.0364831, 0.00736925, 0.493699, -0.869602, 0.0868242, 0.866025, 0.492404, 1, 2, 0)
+visible = false
+light_energy = 100000.0
+light_indirect_energy = 16.0
 shadow_bias = 0.075
-spot_range = 250.0
+spot_range = 1000.0
 spot_attenuation = 2.0
-spot_angle = 4.03
+spot_angle = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D"]
-transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 0.665078, -126)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -500)
 mesh = SubResource("CylinderMesh_uk5n2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -351.33, 9.53674e-07, -3.8147e-06)
+material_override = ExtResource("6_dda6t")
+mesh = SubResource("SphereMesh_dd77f")
+
+[node name="RayCast3D" type="RayCast3D" parent="SpotLight3D/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.96046e-08, 22.9869, -480.25)
+exclude_parent = false
+target_position = Vector3(0, 0, 50)
+hit_from_inside = true
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="."]
 transform = Transform3D(0.996436, 0.0799577, 0.0268597, -0.0161338, 0.493229, -0.86975, -0.0827912, 0.866217, 0.492761, -1, 2, 0)
-light_energy = 1000.0
+visible = false
+light_energy = 10000.0
 shadow_bias = 0.075
 spot_range = 250.0
 spot_attenuation = 2.0
-spot_angle = 4.03
+spot_angle = 10.0
+spot_angle_attenuation = 6.31876e-05
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D2"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -126)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -125)
 mesh = SubResource("CylinderMesh_uk5n2")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
@@ -645,9 +568,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0615621, 0.186189, 0)
 mesh = SubResource("BoxMesh_a7t1a")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D/GunSight"]
-transform = Transform3D(1, 0, 0, 0, 0.258819, -0.965926, 0, 0.965926, 0.258819, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.258819, -0.965926, 0, 0.965926, 0.258819, 0, -0.0120872, 0.00323876)
 light_color = Color(1, 0, 0, 1)
 light_energy = 16.0
+spot_range = 0.0
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.199755, 0)
@@ -676,8 +600,27 @@ transform = Transform3D(1, 0, 0, 0, 0.995954, 0.0898678, 0, -0.0898678, 0.995954
 mesh = SubResource("SphereMesh_so1lr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.552926, -0.83323, 0, 0.83323, 0.552926, 0, 134.161, -83.2839)
+transform = Transform3D(0.000372354, 4.96876, -0.00534485, 3.08588, -0.0262314, -0.852697, -7.04753, -0.0112233, -0.373368, -4.12254, 607.236, -351.428)
 visible = false
 mesh = SubResource("QuadMesh_ein4f")
+
+[node name="Searchlight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.08133, 0, 0, 0, 0.99634, 0.0854865, 0, -0.0854865, 0.99634, 0, 0, -4.56005)
+visible = false
+mesh = SubResource("CylinderMesh_mriol")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Searchlight"]
+transform = Transform3D(0.996044, 0, 0.0888595, 0.0888593, 0.0023387, -0.996041, -0.000207815, 0.999997, 0.00232944, 3.05474e-07, -1.91869, -2.03078e-07)
+visible = false
+light_color = Color(0.506956, 0.581318, 0.748018, 1)
+light_energy = 500000.0
+light_indirect_energy = 0.0
+light_size = 1.0
+shadow_enabled = true
+shadow_bias = 1.0
+shadow_normal_bias = 0.0
+spot_range = 236.265
+spot_angle = 13.2108
+spot_angle_attenuation = 57.68
 
 [connection signal="timeout" from="Gun/Timer" to="Gun" method="_on_timer_timeout"]

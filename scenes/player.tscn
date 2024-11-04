@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_4ppyf"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_0em3p"]
-[ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://ship_metal.tres" id="3_3fxje"]
+[ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://shaders/ship_metal.tres" id="3_3fxje"]
 [ext_resource type="Script" path="res://gun.gd" id="3_ayxod"]
 [ext_resource type="Script" path="res://engine.gd" id="4_ubfvq"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_b6y4e"]
