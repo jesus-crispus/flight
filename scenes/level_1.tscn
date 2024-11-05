@@ -264,6 +264,7 @@ glow_bloom = 0.04
 glow_blend_mode = 1
 glow_hdr_threshold = 0.0
 glow_hdr_scale = 1.0
+fog_enabled = true
 fog_light_color = Color(0.140262, 0.156196, 0.181246, 1)
 fog_density = 0.0
 volumetric_fog_enabled = true
@@ -334,7 +335,7 @@ void fragment() {
 	 
 	vec4 color = textureLod(screen_texture, SCREEN_UV ,1.0) * vec4(1,1,1,1);
 	
-	COLOR = vec4(color.xyz * random_number, color.w);
+	COLOR = (vec4(color.rgb * random_number, color.w));
 	 
 	
 }"
@@ -343,7 +344,7 @@ void fragment() {
 shader = SubResource("Shader_2oeqo")
 shader_parameter/size = Vector2(32, 28)
 
-[node name="Level1" type="Node3D"]
+[node name="Node3D" type="Node3D"]
 script = ExtResource("1_07gk5")
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]

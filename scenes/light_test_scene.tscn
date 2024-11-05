@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bvmh1c4fq2njj"]
+[gd_scene load_steps=17 format=3 uid="uid://bvmh1c4fq2njj"]
 
 [ext_resource type="Shader" path="res://shaders/fake_volumetric_light.gdshader" id="1_af1k6"]
 
@@ -266,6 +266,65 @@ sky_material = SubResource("ProceduralSkyMaterial_d3dhg")
 background_mode = 2
 sky = SubResource("Sky_en05w")
 
+[sub_resource type="Shader" id="Shader_hf1ln"]
+code = "shader_type spatial;
+
+uniform sampler2D height_texture: hint_default_white;
+
+varying float height;
+const float speed = 0.2;
+
+void vertex() {
+	
+	height = (texture(height_texture, vec2(VERTEX.x + TIME * speed,VERTEX.z)).y);
+	VERTEX.y += height * 50.0;
+	
+	//float number = abs(VERTEX.z) * 0.5;
+	//float number2 = number - float(int(number));
+	//if (number2 > 0.5)
+		//VERTEX.x += 0.5
+		//;
+	
+	
+	
+	height *= 0.5;
+	
+	
+	
+	
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	ALBEDO = COLOR.xyz * height;
+	
+	ALBEDO = ALBEDO;
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_c4p6t"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0rb7m"]
+seamless = true
+noise = SubResource("FastNoiseLite_c4p6t")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b7xh8"]
+render_priority = 0
+shader = SubResource("Shader_hf1ln")
+shader_parameter/height_texture = SubResource("NoiseTexture2D_0rb7m")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_d0ap4"]
+material = SubResource("ShaderMaterial_b7xh8")
+size = Vector2(512, 512)
+subdivide_width = 512
+subdivide_depth = 512
+
 [node name="LightTestScene" type="Node3D"]
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
@@ -312,4 +371,7 @@ environment = SubResource("Environment_ml0dq")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 114.274, 446.307, 0)
-visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1223.02, 0, 0)
+mesh = SubResource("PlaneMesh_d0ap4")
