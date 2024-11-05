@@ -1,7 +1,7 @@
 [gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://c8o1joaul38x5"]
 
 [sub_resource type="SystemFont" id="SystemFont_pri3x"]
-font_names = PackedStringArray("Magneto")
+font_names = PackedStringArray("Century")
 
 [resource]
 font = SubResource("SystemFont_pri3x")

@@ -354,7 +354,7 @@ material_override = SubResource("StandardMaterial3D_1j0m8")
 skeleton = NodePath("../../../../Raycast")
 
 [node name="Raycast" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.997203, 0.0747351, 0, -0.074735, 0.997204, 0, 0, 57.9846)
+transform = Transform3D(1, 0, 0, 0, 0.646803, 0.762657, 0, -0.762657, 0.646803, 0, 35.4268, 118.202)
 material_override = SubResource("StandardMaterial3D_bg1sr")
 mesh = SubResource("SphereMesh_rjdl3")
 script = SubResource("GDScript_iyf2y")

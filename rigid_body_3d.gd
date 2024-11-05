@@ -1,7 +1,7 @@
 extends RigidBody3D
 
 @export var ship_resourse: ShipResource
-
+@export var destination_node: Node3D
 
 @onready var thrust_curve: Curve = ship_resourse.thrust_curve
 

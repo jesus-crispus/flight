@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=64 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
@@ -112,6 +112,7 @@ point_count = 2
 curve = SubResource("Curve_q3v4k")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
+particle_flag_disable_z = true
 inherit_velocity_ratio = 1.0
 direction = Vector3(0, -1, 0)
 spread = 15.652
@@ -281,6 +282,77 @@ bottom_radius = 1.0
 height = 5.0
 cap_top = false
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f2ie8"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_oxw87"]
+material = SubResource("StandardMaterial3D_f2ie8")
+height = 7.0
+
+[sub_resource type="GDScript" id="GDScript_pro0c"]
+script/source = "extends MeshInstance3D
+
+var destination : Vector3
+var ship 
+var original_basis: Basis
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	ship = get_parent()
+	var node = get_parent().destination_node
+	
+	destination.x = node.position.x
+	destination.y = node.position.y
+	destination.z = 0
+	#destination = destination * self.global_transform
+	
+	original_basis = basis
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	self.position.x = ship.position.x
+	self.position.y = ship.position.y
+	
+	var new_destination =  self.transform * destination
+	destination = destination.normalized()
+	
+	var angle = Vector3.UP.dot(destination)
+	
+	
+	self.basis = original_basis.rotated(Vector3(0,0,0) ,angle)
+	
+	#self.look_at_from_position(position , destination,Vector3(0,0,1),true)
+	
+"
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5c2dm"]
+top_radius = 0.0
+bottom_radius = 0.8
+height = 4.308
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qhb2n"]
+particle_flag_align_y = true
+particle_flag_rotate_y = true
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, -9.8, 5)
+
+[sub_resource type="Curve" id="Curve_1mi0k"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.335766, 0.513473), 0.0, 0.0, 0, 0, Vector2(0.981752, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ma1gh"]
+cull_mode = 2
+no_depth_test = true
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_wlvxw"]
+material = SubResource("StandardMaterial3D_ma1gh")
+sections = 10
+section_segments = 10
+curve = SubResource("Curve_1mi0k")
+
 [node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
 top_level = true
 axis_lock_linear_z = true
@@ -361,8 +433,7 @@ autoplay = true
 process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.07959, -4, 0)
 top_level = true
-amount = 500
-lifetime = 2.0
+amount = 200
 randomness = 1.0
 fixed_fps = 60
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
@@ -387,6 +458,7 @@ script = SubResource("GDScript_30xwn")
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.38214, 0)
+visible = false
 light_color = Color(1, 0.648667, 0.32, 1)
 light_energy = 100.0
 light_specular = 3.749
@@ -398,6 +470,7 @@ script = SubResource("GDScript_30xwn")
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5.90792, 0)
+visible = false
 light_color = Color(1, 0.648667, 0.32, 1)
 light_energy = 150.0
 light_specular = 3.749
@@ -433,10 +506,10 @@ autoplay = true
 process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -4, 0)
 top_level = true
-amount = 500
-lifetime = 2.0
+amount = 200
 randomness = 1.0
 fixed_fps = 60
+fract_delta = false
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
 draw_order = 2
 process_material = SubResource("ParticleProcessMaterial_e3xkk")
@@ -459,6 +532,7 @@ script = SubResource("GDScript_30xwn")
 
 [node name="SpotLight3D2" type="SpotLight3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.38214, 0)
+visible = false
 light_color = Color(1, 0.648667, 0.32, 1)
 light_energy = 100.0
 light_specular = 3.749
@@ -470,6 +544,7 @@ script = SubResource("GDScript_30xwn")
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5.90792, 0)
+visible = false
 light_color = Color(1, 0.648667, 0.32, 1)
 light_energy = 150.0
 light_specular = 3.749
@@ -622,5 +697,27 @@ shadow_normal_bias = 0.0
 spot_range = 236.265
 spot_angle = 13.2108
 spot_angle_attenuation = 57.68
+
+[node name="arrow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+top_level = true
+mesh = SubResource("CylinderMesh_oxw87")
+script = SubResource("GDScript_pro0c")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.49351, 0)
+mesh = SubResource("CylinderMesh_5c2dm")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.06714, 0)
+emitting = false
+amount = 40
+lifetime = 2.08
+interpolate = false
+fract_delta = false
+trail_enabled = true
+trail_lifetime = 0.57
+process_material = SubResource("ParticleProcessMaterial_qhb2n")
+draw_pass_1 = SubResource("RibbonTrailMesh_wlvxw")
 
 [connection signal="timeout" from="Gun/Timer" to="Gun" method="_on_timer_timeout"]
