@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=60 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
@@ -75,7 +75,7 @@ curve = SubResource("Curve_vtjbv")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_jsjxk"]
 noise_type = 2
-frequency = 0.0044
+frequency = 0.0082
 cellular_return_type = 3
 domain_warp_type = 1
 domain_warp_frequency = 0.004
@@ -123,16 +123,134 @@ as_normal_map = true
 bump_strength = 32.0
 noise = SubResource("FastNoiseLite_wdul1")
 
+[sub_resource type="Gradient" id="Gradient_xu7pt"]
+offsets = PackedFloat32Array(0, 0.516908, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_oscgd"]
+noise_type = 3
+frequency = 0.0179
+fractal_type = 2
+fractal_weighted_strength = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_oe3k0"]
+seamless = true
+color_ramp = SubResource("Gradient_xu7pt")
+noise = SubResource("FastNoiseLite_oscgd")
+
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_armlv"]
 width = 1000
 height = 1000
 seamless = true
 noise = SubResource("FastNoiseLite_jsjxk")
 
+[sub_resource type="Shader" id="Shader_8x8b5"]
+code = "shader_type spatial;
+uniform sampler2D emission_texture: hint_default_white;
+uniform sampler2D normal_texture: hint_default_black;
+uniform sampler2D noise_texture: hint_default_black;
+uniform vec3 color: source_color;
+uniform vec3 objective_position;
+uniform float speed;
+uniform float pulse_speed;
+
+varying vec2 global_position;
+varying vec2 target_position;
+
+void vertex() {
+	
+	global_position =  VERTEX.xy;
+	
+	target_position = vec4( MODEL_MATRIX * vec4(objective_position.xy,0,1) ).xy;
+	
+	UV = UV * vec2(2.5,12.5);
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	//ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
+	if(ALPHA < 0.001){
+		
+		//discard;
+	}
+	
+	
+	float distance_to_objective = (distance(global_position, target_position));
+	float inversesqrt_distance_to_objective = inversesqrt(distance_to_objective * 10.0);
+	
+	
+	
+	ALPHA *= inversesqrt_distance_to_objective * 15.0;
+	
+	
+	
+	
+	//ALPHA = (texture(emission_texture, vec2(0.00002 *(distance(global_position.xy, target_position.xy)),0.0))).x;
+	
+	
+	//ALBEDO = vec3(0,0,1) * inversesqrt(distance(global_position, target_position)) * 100.0;
+	
+	float noise_multiplier =  TIME * speed;
+	
+	float slow_pulse_multiplier =  abs(sin(TIME * pulse_speed)) + 0.6 ;
+	
+	ALBEDO = color + (texture(noise_texture,normalize(UV) + normalize(target_position - global_position) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 10.0);
+	
+	EMISSION =  ALBEDO * (20.0);
+	
+	ALPHA *= slow_pulse_multiplier;
+	
+	NORMAL = texture(emission_texture, vec2(UV.x, UV.y)).rgb;
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="Gradient" id="Gradient_xwj4g"]
+offsets = PackedFloat32Array(0, 0.369509, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.0166664, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xodnf"]
+frequency = 0.0151
+fractal_type = 3
+domain_warp_enabled = true
+domain_warp_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6d6pf"]
+seamless = true
+color_ramp = SubResource("Gradient_xwj4g")
+noise = SubResource("FastNoiseLite_xodnf")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ps03"]
+seamless = true
+as_normal_map = true
+color_ramp = SubResource("Gradient_xu7pt")
+noise = SubResource("FastNoiseLite_oscgd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cqtei"]
+render_priority = 0
+shader = SubResource("Shader_8x8b5")
+shader_parameter/color = Color(0, 0.556863, 0.560784, 1)
+shader_parameter/objective_position = Vector3(0, 2250, 0)
+shader_parameter/speed = 0.45
+shader_parameter/pulse_speed = 0.9
+shader_parameter/emission_texture = SubResource("NoiseTexture2D_oe3k0")
+shader_parameter/normal_texture = SubResource("NoiseTexture2D_2ps03")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_6d6pf")
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tapvg"]
+next_pass = SubResource("ShaderMaterial_cqtei")
 albedo_color = Color(0.264383, 0.340383, 0.375796, 1)
 albedo_texture = SubResource("NoiseTexture2D_qg64r")
 roughness = 0.54
+emission = Color(0, 0.555164, 0.559811, 1)
+emission_energy_multiplier = 100.0
+emission_operator = 1
+emission_texture = SubResource("NoiseTexture2D_oe3k0")
 normal_enabled = true
 normal_texture = SubResource("NoiseTexture2D_r7noj")
 clearcoat_roughness = 0.0
@@ -143,13 +261,12 @@ heightmap_deep_parallax = true
 heightmap_min_layers = 16
 heightmap_max_layers = 32
 heightmap_texture = SubResource("NoiseTexture2D_armlv")
-subsurf_scatter_enabled = true
-subsurf_scatter_strength = 1.0
+subsurf_scatter_strength = 0.1
 backlight = Color(0.741385, 0.741385, 0.741385, 1)
 detail_mask = SubResource("NoiseTexture2D_264ir")
 detail_albedo = SubResource("NoiseTexture2D_xso74")
 detail_normal = SubResource("NoiseTexture2D_namg0")
-uv1_scale = Vector3(2.5, 12.5, 0.25)
+uv1_scale = Vector3(2.5, 12.5, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
 material = SubResource("StandardMaterial3D_tapvg")
@@ -190,7 +307,7 @@ func set_radius():
 
 func _on_body_entered(body: Node3D) -> void:
 	if body.is_in_group(\"player\"):
-		
+		body.win()
 		pass
 "
 
@@ -248,6 +365,11 @@ Button/fonts/font = SubResource("SystemFont_ntehk")
 Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
 Button/fonts/font = SubResource("SystemFont_ntehk")
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_g85y2"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_46el1"]
+noise = SubResource("FastNoiseLite_g85y2")
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dkt5e"]
 sky_top_color = Color(0.877036, 0.75244, 0.992108, 1)
 
@@ -258,16 +380,12 @@ sky_material = SubResource("ProceduralSkyMaterial_dkt5e")
 background_mode = 2
 sky = SubResource("Sky_mgkrf")
 tonemap_mode = 3
-tonemap_exposure = 0.59
+tonemap_exposure = 0.38
 glow_enabled = true
-glow_bloom = 0.04
-glow_blend_mode = 1
-glow_hdr_threshold = 0.0
-glow_hdr_scale = 1.0
+glow_normalized = true
+glow_map = SubResource("NoiseTexture2D_46el1")
 fog_enabled = true
 fog_light_color = Color(0.140262, 0.156196, 0.181246, 1)
-fog_density = 0.0
-volumetric_fog_enabled = true
 volumetric_fog_density = 0.0205
 volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
 volumetric_fog_emission = Color(0.0562916, 0.0562916, 0.0562916, 1)
@@ -294,10 +412,11 @@ uniform vec2 size = vec2(16.0, 14.0);
 // If you intend to read from mipmaps with `textureLod()` LOD values greater than `0.0`,
 // use `filter_nearest_mipmap` instead. This shader doesn't require it.
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+uniform float range_start = 0.5;
+uniform float range_end = 1.1;
 
 
-const float range_start = 0.5;
-const float range_end = 1.1;
+
 
 
 uint hash( uint x ) {
@@ -330,19 +449,21 @@ float random( vec3  v ) { return floatConstruct(hash2(floatBitsToUint(v))); }
 
 void fragment() {
 	vec3  inputs = vec3( SCREEN_UV.xy, TIME );
-	
+
 	float random_number = random(inputs) * (range_end - range_start) + range_start ;
-	 
+
 	vec4 color = textureLod(screen_texture, SCREEN_UV ,1.0) * vec4(1,1,1,1);
-	
+
 	COLOR = (vec4(color.rgb * random_number, color.w));
-	 
-	
+
+
 }"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5uktp"]
 shader = SubResource("Shader_2oeqo")
-shader_parameter/size = Vector2(32, 28)
+shader_parameter/size = Vector2(16, 14)
+shader_parameter/range_start = 0.6
+shader_parameter/range_end = 1.0
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_07gk5")
@@ -364,7 +485,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -254.794, 639.203, 0)
 
 [node name="planet5" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2000, 0)
-visible = false
 radius = 300.0
 radial_segments = 100
 rings = 50
@@ -373,7 +493,6 @@ planet_gravity_well_radius = 1000.0
 gravity = 80.0
 
 [node name="Area3D" parent="CSGCombiner3D/planet5" index="0"]
-visible = false
 collision_layer = 3
 collision_mask = 3
 gravity_point_unit_distance = 300.0
@@ -381,17 +500,14 @@ gravity = 1000.0
 
 [node name="GPUParticlesCollisionSphere3D" parent="CSGCombiner3D/planet5" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.796967, 0, 0.0411682)
-visible = false
 cull_mask = 4294967287
 
 [node name="GPUParticlesAttractorSphere3D" parent="CSGCombiner3D/planet5" index="2"]
-visible = false
 cull_mask = 4294967287
 radius = 1000.0
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="CSGCombiner3D/planet5"]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
-visible = false
 layers = 4
 amount = 1000
 visibility_aabb = AABB(-995.815, -1001.89, -3.21294, 1994.57, 1998.3, 6.42588)
@@ -411,11 +527,11 @@ operation = 2
 size = Vector3(37.0229, 148.234, 72.56)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.864, 10.812, -46.422)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.52, -50)
 mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2233.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2250, 0)
 script = SubResource("GDScript_rmdts")
 radius = 30.0
 
@@ -427,10 +543,11 @@ shape = SubResource("SphereShape3D_04y04")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objective"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.112831, -3.99997, 57.4179)
-light_energy = 100.0
+light_color = Color(0, 0.556863, 0.560784, 1)
+light_energy = 5555.0
 shadow_enabled = true
 omni_range = 500.0
-omni_attenuation = 0.5
+omni_attenuation = 1.185
 
 [node name="start_pad" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
@@ -631,7 +748,6 @@ environment = SubResource("Environment_rdba1")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.67462)
 light_color = Color(0.961667, 0.9, 1, 1)
-shadow_enabled = true
 script = SubResource("GDScript_ukgk2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

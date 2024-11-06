@@ -1,11 +1,11 @@
-[gd_scene load_steps=56 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=66 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
-[ext_resource type="Script" path="res://gun.gd" id="4_8w4ri"]
 [ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
 [ext_resource type="Material" uid="uid://ctk7pt6rxo1be" path="res://shaders/Searchlight_2.tres" id="6_dda6t"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
+[ext_resource type="Texture2D" uid="uid://ubinbjuynnqy" path="res://resources/arrow.png" id="6_oau8r"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -31,29 +31,6 @@ func _process(delta: float) -> void:
 	pass
 	look_at(player.position)
 	
-"
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_2y68j"]
-top_radius = 0.1
-bottom_radius = 0.1
-height = 3.0
-
-[sub_resource type="GDScript" id="GDScript_65l02"]
-script/source = "extends Node3D
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
-func _physics_process(delta: float) -> void:
-	pass
 "
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_b2mkt"]
@@ -112,6 +89,8 @@ point_count = 2
 curve = SubResource("Curve_q3v4k")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
+lifetime_randomness = 0.3
+particle_flag_disable_z = true
 inherit_velocity_ratio = 1.0
 direction = Vector3(0, -1, 0)
 spread = 15.652
@@ -281,6 +260,85 @@ bottom_radius = 1.0
 height = 5.0
 cap_top = false
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_72lv7"]
+inherit_velocity_ratio = 1.0
+spread = 180.0
+flatness = 1.0
+initial_velocity_min = 50.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_ksnea"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lsr41"]
+lifetime_randomness = 0.16
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+inherit_velocity_ratio = 0.455
+spread = 180.0
+initial_velocity_min = 19.6
+initial_velocity_max = 19.6
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 32
+
+[sub_resource type="Curve" id="Curve_tpahi"]
+_data = [Vector2(0, 0), 0.0, 4.65921, 0, 0, Vector2(0.324859, 0.638641), -0.0734546, -0.0734546, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6nyqc"]
+cull_mode = 2
+albedo_color = Color(0.79, 0.716267, 0.158, 1)
+emission_enabled = true
+emission = Color(0.788235, 0.54902, 0.156863, 1)
+emission_energy_multiplier = 16.0
+disable_receive_shadows = true
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_lx3kh"]
+material = SubResource("StandardMaterial3D_6nyqc")
+section_length = 1.0
+section_segments = 20
+curve = SubResource("Curve_tpahi")
+
+[sub_resource type="Curve" id="Curve_2kewc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vwqpm"]
+curve = SubResource("Curve_2kewc")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fgcym"]
+lifetime_randomness = 0.24
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+spread = 180.0
+initial_velocity_min = 19.0
+initial_velocity_max = 30.0
+scale_curve = SubResource("CurveTexture_vwqpm")
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 32
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5a8s6"]
+cull_mode = 2
+albedo_color = Color(0.79, 0.316, 0.158, 1)
+emission_enabled = true
+emission = Color(0.788235, 0.317647, 0.156863, 1)
+emission_energy_multiplier = 16.0
+disable_receive_shadows = true
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_5fsnt"]
+material = SubResource("StandardMaterial3D_5a8s6")
+size = 0.5
+section_length = 1.0
+section_segments = 20
+curve = SubResource("Curve_tpahi")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dtaom"]
+size = Vector2(55, 55)
+
 [node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
 top_level = true
 axis_lock_linear_z = true
@@ -307,32 +365,9 @@ shape = SubResource("ConvexPolygonShape3D_o56j1")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64.8395)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100.823)
 current = true
 script = SubResource("GDScript_yqvit")
-
-[node name="Gun" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.482551, 4.51484, -0.229239)
-visible = false
-script = ExtResource("4_8w4ri")
-cooldown_time = 0.205
-
-[node name="Timer" type="Timer" parent="Gun"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Gun"]
-mesh = SubResource("CylinderMesh_2y68j")
-
-[node name="projectile_spawn_point" type="MeshInstance3D" parent="Gun/MeshInstance3D"]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-script = SubResource("GDScript_65l02")
-
-[node name="Wepons" type="Node3D" parent="."]
-
-[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="Wepons"]
-transform = Transform3D(0.734524, 0.678583, 0, -0.678583, 0.734524, 0, 0, 0, 1, -0.0989494, -20.7843, 7.07388)
-visible = false
-size = Vector3(41.8624, 7.76978, 40.9887)
 
 [node name="thruster" type="Area3D" parent="."]
 process_priority = 1
@@ -361,8 +396,8 @@ autoplay = true
 process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.07959, -4, 0)
 top_level = true
-amount = 500
-lifetime = 2.0
+amount = 200
+lifetime = 1.5
 randomness = 1.0
 fixed_fps = 60
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
@@ -433,8 +468,8 @@ autoplay = true
 process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -4, 0)
 top_level = true
-amount = 500
-lifetime = 2.0
+amount = 200
+lifetime = 1.5
 randomness = 1.0
 fixed_fps = 60
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
@@ -623,4 +658,50 @@ spot_range = 236.265
 spot_angle = 13.2108
 spot_angle_attenuation = 57.68
 
-[connection signal="timeout" from="Gun/Timer" to="Gun" method="_on_timer_timeout"]
+[node name="Celebration" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.17558)
+
+[node name="Fireworks" type="GPUParticles3D" parent="Celebration"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -2.67788e-07, 2.41336)
+amount = 5
+sub_emitter = NodePath("../Stage1")
+lifetime = 2.0
+visibility_aabb = AABB(-68.0702, -1, -26.5298, 87.8054, 2, 57.1838)
+process_material = SubResource("ParticleProcessMaterial_72lv7")
+draw_pass_1 = SubResource("SphereMesh_ksnea")
+
+[node name="Stage1" type="GPUParticles3D" parent="Celebration"]
+amount = 100
+sub_emitter = NodePath("../Stage2")
+lifetime = 2.0
+explosiveness = 1.0
+visibility_aabb = AABB(-5, -5, -5, 10, 10, 10)
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_lsr41")
+draw_pass_1 = SubResource("RibbonTrailMesh_lx3kh")
+
+[node name="Stage2" type="GPUParticles3D" parent="Celebration"]
+amount = 1600
+lifetime = 1.5
+explosiveness = 0.69
+visibility_aabb = AABB(-101.572, -34.6798, -59.1357, 162.897, 161.015, 137.915)
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_fgcym")
+draw_pass_1 = SubResource("RibbonTrailMesh_5fsnt")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Celebration"]
+transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, 0, 7.16028, -3.09602)
+visible = false
+mesh = SubResource("QuadMesh_dtaom")
+skeleton = NodePath("../../SpotLight3D3")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, -1.0858e-14, 0.88541, -3.87025e-08, -0.464811, 0.464811, -2.03176e-08, 0.88541, 0, 2.13675, -1.26239)
+light_energy = 10000.0
+light_projector = ExtResource("6_oau8r")
+shadow_enabled = true
+spot_range = 100.0
+spot_attenuation = 2.0
+spot_angle = 30.0
+spot_angle_attenuation = 0.00133402

@@ -100,7 +100,8 @@ func breaking_thrusters():
 	
 	
 
-
+func win():
+	%Fireworks.emitting = true
 
 
 

@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://bvmh1c4fq2njj"]
+[gd_scene load_steps=37 format=3 uid="uid://bvmh1c4fq2njj"]
 
 [ext_resource type="Shader" path="res://shaders/fake_volumetric_light.gdshader" id="1_af1k6"]
+[ext_resource type="Shader" path="res://shaders/light_test_scene.gdshader" id="2_4om0k"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_quwve"]
 render_priority = 0
@@ -257,73 +258,170 @@ func calculate_distance(result) -> float:
 	return distance
 "
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_d3dhg"]
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_rbbx3"]
 
 [sub_resource type="Sky" id="Sky_en05w"]
-sky_material = SubResource("ProceduralSkyMaterial_d3dhg")
+sky_material = SubResource("PhysicalSkyMaterial_rbbx3")
 
 [sub_resource type="Environment" id="Environment_ml0dq"]
 background_mode = 2
 sky = SubResource("Sky_en05w")
+tonemap_mode = 3
+glow_enabled = true
 
-[sub_resource type="Shader" id="Shader_hf1ln"]
-code = "shader_type spatial;
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h4f0v"]
+noise_type = 3
 
-uniform sampler2D height_texture: hint_default_white;
-
-varying float height;
-const float speed = 0.2;
-
-void vertex() {
-	
-	height = (texture(height_texture, vec2(VERTEX.x + TIME * speed,VERTEX.z)).y);
-	VERTEX.y += height * 50.0;
-	
-	//float number = abs(VERTEX.z) * 0.5;
-	//float number2 = number - float(int(number));
-	//if (number2 > 0.5)
-		//VERTEX.x += 0.5
-		//;
-	
-	
-	
-	height *= 0.5;
-	
-	
-	
-	
-	// Called for every vertex the material is visible on.
-}
-
-void fragment() {
-	// Called for every pixel the material is visible on.
-	ALBEDO = COLOR.xyz * height;
-	
-	ALBEDO = ALBEDO;
-}
-
-//void light() {
-	// Called for every pixel for every light affecting the material.
-	// Uncomment to replace the default light processing function with this one.
-//}
-"
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_c4p6t"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0rb7m"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ucyp6"]
 seamless = true
-noise = SubResource("FastNoiseLite_c4p6t")
+noise = SubResource("FastNoiseLite_h4f0v")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wprp6"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lviq1"]
+seamless = true
+noise = SubResource("FastNoiseLite_wprp6")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ts2r3"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_h4f0v")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qy8xx"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xdcan"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_qy8xx")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b7xh8"]
 render_priority = 0
-shader = SubResource("Shader_hf1ln")
-shader_parameter/height_texture = SubResource("NoiseTexture2D_0rb7m")
+shader = ExtResource("2_4om0k")
+shader_parameter/color = Color(0.00255134, 0.310326, 0.453942, 1)
+shader_parameter/top_color = Color(0, 0.529653, 0.476207, 1)
+shader_parameter/bottom_color = Color(0.0199577, 0.221149, 0.401118, 1)
+shader_parameter/speed = 0.03
+shader_parameter/height_texture1 = SubResource("NoiseTexture2D_ucyp6")
+shader_parameter/height_texture2 = SubResource("NoiseTexture2D_lviq1")
+shader_parameter/normal_map1 = SubResource("NoiseTexture2D_ts2r3")
+shader_parameter/normal_map2 = SubResource("NoiseTexture2D_xdcan")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_d0ap4"]
+lightmap_size_hint = Vector2i(2560, 2560)
 material = SubResource("ShaderMaterial_b7xh8")
-size = Vector2(512, 512)
+uv2_padding = 1.0
+size = Vector2(1024, 1024)
 subdivide_width = 512
 subdivide_depth = 512
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5xiwv"]
+lifetime_randomness = 0.31
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+inherit_velocity_ratio = 1.0
+spread = 180.0
+initial_velocity_min = 70.0
+initial_velocity_max = 100.0
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 32
+
+[sub_resource type="Curve" id="Curve_5ip5n"]
+_data = [Vector2(0, 0), 0.0, 4.65921, 0, 0, Vector2(0.324859, 0.638641), -0.0734546, -0.0734546, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wr4il"]
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.79, 0.716267, 0.158, 1)
+emission_enabled = true
+emission = Color(0.788235, 0.54902, 0.156863, 1)
+emission_energy_multiplier = 16.0
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_d1egx"]
+material = SubResource("StandardMaterial3D_wr4il")
+size = 4.0
+section_length = 1.0
+section_segments = 20
+curve = SubResource("Curve_5ip5n")
+
+[sub_resource type="Curve" id="Curve_si21j"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_tutn2"]
+curve = SubResource("Curve_si21j")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fd1uw"]
+lifetime_randomness = 0.24
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+inherit_velocity_ratio = 1.0
+spread = 180.0
+initial_velocity_min = 40.0
+initial_velocity_max = 50.0
+scale_curve = SubResource("CurveTexture_tutn2")
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 32
+
+[sub_resource type="Curve" id="Curve_pp2pv"]
+_data = [Vector2(0, 0), 0.0, 4.65921, 0, 0, Vector2(0.324859, 0.638641), -0.0734546, -0.0734546, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_86p0q"]
+cull_mode = 2
+albedo_color = Color(0.79, 0.316, 0.158, 1)
+emission_enabled = true
+emission = Color(0.788235, 0.317647, 0.156863, 1)
+emission_energy_multiplier = 16.0
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_hid3e"]
+material = SubResource("StandardMaterial3D_86p0q")
+size = 2.0
+section_length = 1.0
+section_segments = 20
+curve = SubResource("Curve_pp2pv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3wx6v"]
+lifetime_randomness = 0.7
+particle_flag_align_y = true
+emission_shape_scale = Vector3(1, 1, 50)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 50)
+velocity_pivot = Vector3(0, 0, 50)
+direction = Vector3(0, 1, 0)
+spread = 15.0
+initial_velocity_min = 200.0
+initial_velocity_max = 200.0
+sub_emitter_mode = 2
+sub_emitter_amount_at_end = 32
+
+[sub_resource type="Curve" id="Curve_bqtio"]
+_data = [Vector2(0, 0), 0.0, 6.12272, 0, 0, Vector2(0.122093, 0.33829), 0.177946, 0.177946, 0, 0, Vector2(1, 0), -0.940974, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sgb0u"]
+albedo_color = Color(0.0755934, 0.860288, 0.971868, 1)
+emission_enabled = true
+emission = Color(0.0745098, 0.858824, 0.972549, 1)
+emission_energy_multiplier = 16.0
+use_particle_trails = true
+
+[sub_resource type="TubeTrailMesh" id="TubeTrailMesh_oa7pg"]
+material = SubResource("StandardMaterial3D_sgb0u")
+radius = 3.0
+section_rings = 10
+curve = SubResource("Curve_bqtio")
+
+[sub_resource type="SphereMesh" id="SphereMesh_kd8cy"]
+material = SubResource("ShaderMaterial_b7xh8")
+radius = 125.0
+height = 250.0
+radial_segments = 320
+rings = 160
 
 [node name="LightTestScene" type="Node3D"]
 
@@ -338,6 +436,7 @@ spot_angle = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D"]
 transform = Transform3D(-0.17815, -0.984003, 0, 3.01085e-07, -5.45102e-08, 1, -0.984003, 0.17815, 3.0598e-07, 0, 0, -500)
+visible = false
 mesh = SubResource("CylinderMesh_rofh7")
 
 [node name="StaticBody3D" type="Area3D" parent="SpotLight3D"]
@@ -362,7 +461,6 @@ RAY_LENGTH = 1000.0
 
 [node name="bob" type="MeshInstance3D" parent="Raycast"]
 top_level = true
-visible = false
 material_override = SubResource("StandardMaterial3D_bg1sr")
 skeleton = NodePath("")
 
@@ -370,8 +468,42 @@ skeleton = NodePath("")
 environment = SubResource("Environment_ml0dq")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 114.274, 446.307, 0)
+transform = Transform3D(1, 0, 0, 0, 0.980608, -0.19598, 0, 0.19598, 0.980608, 114.274, 446.307, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1223.02, 0, 0)
+rotation_edit_mode = 2
 mesh = SubResource("PlaneMesh_d0ap4")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D"]
+emitting = false
+amount = 500
+sub_emitter = NodePath("../GPUParticles3D3")
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.69
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_5xiwv")
+draw_pass_1 = SubResource("RibbonTrailMesh_d1egx")
+
+[node name="GPUParticles3D3" type="GPUParticles3D" parent="MeshInstance3D"]
+emitting = false
+amount = 16000
+lifetime = 1.5
+one_shot = true
+explosiveness = 0.69
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_fd1uw")
+draw_pass_1 = SubResource("RibbonTrailMesh_hid3e")
+
+[node name="Roket" type="GPUParticles3D" parent="MeshInstance3D"]
+amount = 25
+sub_emitter = NodePath("../GPUParticles3D")
+lifetime = 6.0
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_3wx6v")
+draw_pass_1 = SubResource("TubeTrailMesh_oa7pg")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1132.13, 324.223, 0)
+visible = false
+mesh = SubResource("SphereMesh_kd8cy")
