@@ -1,9 +1,11 @@
-[gd_scene load_steps=60 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=67 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
+[ext_resource type="Shader" path="res://scenes/black_hole.gdshader" id="3_1oyxv"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
 [ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
+[ext_resource type="Shader" path="res://scenes/black_hole_particle.gdshader" id="4_uubri"]
 [ext_resource type="Texture2D" uid="uid://b4l5p6srhnj6m" path="res://icon.svg" id="5_m1u73"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
@@ -169,7 +171,7 @@ void vertex() {
 
 void fragment() {
 	// Called for every pixel the material is visible on.
-	//ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
+	ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
 	if(ALPHA < 0.001){
 		
 		//discard;
@@ -195,7 +197,7 @@ void fragment() {
 	
 	float slow_pulse_multiplier =  abs(sin(TIME * pulse_speed)) + 0.6 ;
 	
-	ALBEDO = color + (texture(noise_texture,normalize(UV) + normalize(target_position - global_position) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 10.0);
+	ALBEDO = color;// + (texture(noise_texture,normalize(UV / vec2(2.5,12.5)) - (normalize( global_position - target_position)) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 15.0);
 	
 	EMISSION =  ALBEDO * (20.0);
 	
@@ -236,7 +238,7 @@ render_priority = 0
 shader = SubResource("Shader_8x8b5")
 shader_parameter/color = Color(0, 0.556863, 0.560784, 1)
 shader_parameter/objective_position = Vector3(0, 2250, 0)
-shader_parameter/speed = 0.45
+shader_parameter/speed = 0.385
 shader_parameter/pulse_speed = 0.9
 shader_parameter/emission_texture = SubResource("NoiseTexture2D_oe3k0")
 shader_parameter/normal_texture = SubResource("NoiseTexture2D_2ps03")
@@ -311,15 +313,41 @@ func _on_body_entered(body: Node3D) -> void:
 		pass
 "
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jxl2i"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(0.516667, 1, 0, 0.0745098)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6ur1p"]
+render_priority = 0
+shader = ExtResource("3_1oyxv")
 
 [sub_resource type="SphereMesh" id="SphereMesh_r5nlw"]
-material = SubResource("StandardMaterial3D_jxl2i")
+material = SubResource("ShaderMaterial_6ur1p")
 radius = 30.0
 height = 60.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w7ah8"]
+shader = ExtResource("4_uubri")
+shader_parameter/range_start = 30.0
+shader_parameter/range_end = 100.0
+shader_parameter/angle_per_frame = 3.6
+
+[sub_resource type="Curve" id="Curve_17jq3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5n66e"]
+cull_mode = 2
+albedo_color = Color(1, 0.15, 0.15, 1)
+emission_enabled = true
+emission = Color(0, 0.158333, 0.95, 1)
+emission_energy_multiplier = 1111.0
+disable_receive_shadows = true
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_xt37m"]
+material = SubResource("StandardMaterial3D_5n66e")
+shape = 0
+sections = 10
+section_length = 0.001
+section_segments = 10
+curve = SubResource("Curve_17jq3")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_04y04"]
 radius = 30.0
@@ -465,6 +493,8 @@ shader_parameter/size = Vector2(16, 14)
 shader_parameter/range_start = 0.6
 shader_parameter/range_end = 1.0
 
+[sub_resource type="QuadMesh" id="QuadMesh_quq7r"]
+
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_07gk5")
 
@@ -509,7 +539,7 @@ radius = 1000.0
 [node name="GPUParticles3D" type="GPUParticles3D" parent="CSGCombiner3D/planet5"]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
 layers = 4
-amount = 1000
+emitting = false
 visibility_aabb = AABB(-995.815, -1001.89, -3.21294, 1994.57, 1998.3, 6.42588)
 trail_enabled = true
 process_material = SubResource("ParticleProcessMaterial_kokto")
@@ -521,13 +551,14 @@ radius = 46.065
 radial_segments = 20
 rings = 10
 
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D/CSGSphere3D6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2483, -0.672058, 24.9031)
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(0.992384, 0.123186, 0, -0.123186, 0.992384, 0, 0, 0, 1, -19.3464, 615.159, 24.9031)
 operation = 2
 size = Vector3(37.0229, 148.234, 72.56)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.52, -50)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
+rotation_edit_mode = 2
 mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
@@ -538,7 +569,19 @@ radius = 30.0
 [node name="MeshInstance3D" type="MeshInstance3D" parent="objective"]
 mesh = SubResource("SphereMesh_r5nlw")
 
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="objective/MeshInstance3D"]
+amount = 2468
+lifetime = 60.0
+interpolate = false
+fract_delta = false
+local_coords = true
+trail_enabled = true
+trail_lifetime = 1.0
+process_material = SubResource("ShaderMaterial_w7ah8")
+draw_pass_1 = SubResource("RibbonTrailMesh_xt37m")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="objective"]
+visible = false
 shape = SubResource("SphereShape3D_04y04")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objective"]
@@ -770,6 +813,15 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+rotation_edit_mode = 1
+mesh = SubResource("QuadMesh_quq7r")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+mesh = SubResource("QuadMesh_quq7r")
+skeleton = NodePath("../..")
 
 [connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
 [connection signal="property_list_changed" from="objective" to="objective" method="_on_property_list_changed"]

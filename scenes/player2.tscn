@@ -691,14 +691,13 @@ process_material = SubResource("ParticleProcessMaterial_fgcym")
 draw_pass_1 = SubResource("RibbonTrailMesh_5fsnt")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Celebration"]
-transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, 0, 7.16028, -3.09602)
-visible = false
+transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, -0.747501, 23.5962, -18.4453)
 mesh = SubResource("QuadMesh_dtaom")
 skeleton = NodePath("../../SpotLight3D3")
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, -1.0858e-14, 0.88541, -3.87025e-08, -0.464811, 0.464811, -2.03176e-08, 0.88541, 0, 2.13675, -1.26239)
-light_energy = 10000.0
+transform = Transform3D(-0.188613, -0.981878, -0.0184403, 0.880588, -0.160784, -0.445773, 0.43473, -0.100317, 0.894956, 0, 2.13675, -1.26239)
+light_energy = 1000.0
 light_projector = ExtResource("6_oau8r")
 shadow_enabled = true
 spot_range = 100.0
