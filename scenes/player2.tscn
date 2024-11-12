@@ -1,11 +1,13 @@
-[gd_scene load_steps=66 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=68 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
+[ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://shaders/ship_metal.tres" id="4_am8j6"]
 [ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
 [ext_resource type="Material" uid="uid://ctk7pt6rxo1be" path="res://shaders/Searchlight_2.tres" id="6_dda6t"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
 [ext_resource type="Texture2D" uid="uid://ubinbjuynnqy" path="res://resources/arrow.png" id="6_oau8r"]
+[ext_resource type="Material" uid="uid://bsmmu78ajxbuy" path="res://shaders/dark_ship_metal.tres" id="7_gxbf6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -356,7 +358,7 @@ transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, 0.455
 shape = SubResource("CapsuleShape3D_35t6q")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 4.9454, 0)
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 3.43911, 0)
 shape = SubResource("SphereShape3D_1ygqx")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
@@ -376,6 +378,7 @@ script = ExtResource("5_b5741")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64578, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_b2mkt")
 skeleton = NodePath("../../MeshInstance3D2")
 
@@ -399,7 +402,6 @@ top_level = true
 amount = 200
 lifetime = 1.5
 randomness = 1.0
-fixed_fps = 60
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
 draw_order = 2
 process_material = SubResource("ParticleProcessMaterial_e3xkk")
@@ -448,6 +450,7 @@ script = ExtResource("5_b5741")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64578, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_b2mkt")
 skeleton = NodePath("../../MeshInstance3D2")
 
@@ -471,7 +474,6 @@ top_level = true
 amount = 200
 lifetime = 1.5
 randomness = 1.0
-fixed_fps = 60
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
 draw_order = 2
 process_material = SubResource("ParticleProcessMaterial_e3xkk")
@@ -489,6 +491,7 @@ light_specular = 3.749
 light_cull_mask = 4294967293
 spot_range = 100.0
 spot_attenuation = 1.41
+spot_angle = 98.41
 spot_angle_attenuation = 0.353554
 script = SubResource("GDScript_30xwn")
 
@@ -500,7 +503,7 @@ light_specular = 3.749
 light_cull_mask = 4294967293
 spot_range = 100.0
 spot_attenuation = 1.41
-spot_angle = 61.6
+spot_angle = 140.72
 script = SubResource("GDScript_30xwn")
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="thruster2"]
@@ -510,7 +513,7 @@ light_energy = 150.0
 light_specular = 3.749
 light_cull_mask = 4294967293
 spot_range = 150.0
-spot_angle = 25.0
+spot_angle = 52.69
 script = SubResource("GDScript_30xwn")
 
 [node name="mouse" type="Node3D" parent="."]
@@ -557,45 +560,55 @@ mesh = SubResource("CylinderMesh_uk5n2")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0675079, 1.21853)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_uhqc2")
 skeleton = NodePath("../MeshInstance3D2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.26249, 0.0232474, 0.628025)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("BoxMesh_cupel")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6/MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.645732)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_qhnay")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.262, 0.023, 0.628)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("BoxMesh_cupel")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6/MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.645732)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_qhnay")
 
 [node name="Turet1" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.298075, 0.954543, 0, -0.954543, 0.298075, 0, 2.87599, -0.647687)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_lhb5w")
 
 [node name="ball" type="MeshInstance3D" parent="Turet1"]
 transform = Transform3D(1, 0, 0, 0, 0.295174, -0.955443, 0, 0.955443, 0.295174, 0, 0.404044, 8.3819e-09)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_2hem7")
 skeleton = NodePath("../../MeshInstance3D2")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Turet1/ball"]
 transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, 0, 0)
+material_override = ExtResource("7_gxbf6")
 mesh = SubResource("CylinderMesh_m2ye3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2"]
 transform = Transform3D(-4.37114e-08, 0, 1, -1, -4.37114e-08, -4.37114e-08, 4.37114e-08, -1, 1.91069e-15, 0, -1.84668e-08, -0.422472)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("BoxMesh_778fj")
 skeleton = NodePath("../..")
 
 [node name="Gun" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0772667, 0.519772, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("CylinderMesh_27a2p")
 
 [node name="GunSight" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D"]
@@ -610,23 +623,28 @@ spot_range = 0.0
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.199755, 0)
+material_override = ExtResource("7_gxbf6")
 mesh = SubResource("SphereMesh_5mgqs")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.73, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_p50b0")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2/MeshInstance3D3"]
 transform = Transform3D(0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0, 0, 1, -0.5, 0.73, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_e1ds8")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.73, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_p50b0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D2/MeshInstance3D4"]
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 0.51054, 0.73, 0)
+material_override = ExtResource("4_am8j6")
 mesh = SubResource("SphereMesh_e1ds8")
 skeleton = NodePath("../..")
 
@@ -664,14 +682,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.17558)
 [node name="Fireworks" type="GPUParticles3D" parent="Celebration"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -2.67788e-07, 2.41336)
+emitting = false
 amount = 5
-sub_emitter = NodePath("../Stage1")
-lifetime = 2.0
+sub_emitter = NodePath("Stage1")
+one_shot = true
 visibility_aabb = AABB(-68.0702, -1, -26.5298, 87.8054, 2, 57.1838)
 process_material = SubResource("ParticleProcessMaterial_72lv7")
 draw_pass_1 = SubResource("SphereMesh_ksnea")
 
-[node name="Stage1" type="GPUParticles3D" parent="Celebration"]
+[node name="Stage1" type="GPUParticles3D" parent="Celebration/Fireworks"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -2.41336, -1.62297e-07)
+emitting = false
 amount = 100
 sub_emitter = NodePath("../Stage2")
 lifetime = 2.0
@@ -681,7 +702,9 @@ trail_enabled = true
 process_material = SubResource("ParticleProcessMaterial_lsr41")
 draw_pass_1 = SubResource("RibbonTrailMesh_lx3kh")
 
-[node name="Stage2" type="GPUParticles3D" parent="Celebration"]
+[node name="Stage2" type="GPUParticles3D" parent="Celebration/Fireworks"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -2.41336, -1.62297e-07)
+emitting = false
 amount = 1600
 lifetime = 1.5
 explosiveness = 0.69
@@ -692,6 +715,7 @@ draw_pass_1 = SubResource("RibbonTrailMesh_5fsnt")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Celebration"]
 transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, -0.747501, 23.5962, -18.4453)
+visible = false
 mesh = SubResource("QuadMesh_dtaom")
 skeleton = NodePath("../../SpotLight3D3")
 

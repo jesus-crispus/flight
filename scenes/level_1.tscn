@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=66 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
@@ -160,11 +160,11 @@ varying vec2 global_position;
 varying vec2 target_position;
 
 void vertex() {
-	
+
 	global_position =  VERTEX.xy;
-	
+
 	target_position = vec4( MODEL_MATRIX * vec4(objective_position.xy,0,1) ).xy;
-	
+
 	UV = UV * vec2(2.5,12.5);
 	// Called for every vertex the material is visible on.
 }
@@ -173,36 +173,36 @@ void fragment() {
 	// Called for every pixel the material is visible on.
 	ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
 	if(ALPHA < 0.001){
-		
-		//discard;
+
+		discard;
 	}
-	
-	
+
+
 	float distance_to_objective = (distance(global_position, target_position));
 	float inversesqrt_distance_to_objective = inversesqrt(distance_to_objective * 10.0);
-	
-	
-	
+
+
+
 	ALPHA *= inversesqrt_distance_to_objective * 15.0;
-	
-	
-	
-	
+
+
+
+
 	//ALPHA = (texture(emission_texture, vec2(0.00002 *(distance(global_position.xy, target_position.xy)),0.0))).x;
-	
-	
+
+
 	//ALBEDO = vec3(0,0,1) * inversesqrt(distance(global_position, target_position)) * 100.0;
-	
+
 	float noise_multiplier =  TIME * speed;
-	
+
 	float slow_pulse_multiplier =  abs(sin(TIME * pulse_speed)) + 0.6 ;
-	
+
 	ALBEDO = color;// + (texture(noise_texture,normalize(UV / vec2(2.5,12.5)) - (normalize( global_position - target_position)) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 15.0);
-	
+
 	EMISSION =  ALBEDO * (20.0);
-	
+
 	ALPHA *= slow_pulse_multiplier;
-	
+
 	NORMAL = texture(emission_texture, vec2(UV.x, UV.y)).rgb;
 }
 
@@ -281,7 +281,7 @@ script/source = "#@tool
 extends Area3D
 
 @export var radius: float
-
+var one_time: bool =false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -309,8 +309,10 @@ func set_radius():
 
 func _on_body_entered(body: Node3D) -> void:
 	if body.is_in_group(\"player\"):
-		body.win()
-		pass
+		if one_time == false:
+			one_time= true
+			body.win()
+			%VictoryScreen.show()
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6ur1p"]
@@ -381,17 +383,13 @@ frequency = 0.0505
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_8vq7o"]
 noise = SubResource("FastNoiseLite_y6xwl")
 
-[sub_resource type="SystemFont" id="SystemFont_ntehk"]
+[sub_resource type="SystemFont" id="SystemFont_26als"]
 font_names = PackedStringArray("Rockwell")
 subpixel_positioning = 0
 
 [sub_resource type="Theme" id="Theme_c82qv"]
 Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
-Button/fonts/font = SubResource("SystemFont_ntehk")
-
-[sub_resource type="Theme" id="Theme_8t3af"]
-Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
-Button/fonts/font = SubResource("SystemFont_ntehk")
+Button/fonts/font = SubResource("SystemFont_26als")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_g85y2"]
 
@@ -733,6 +731,7 @@ size = Vector3(9, 8.1792, 15)
 texture = SubResource("NoiseTexture3D_8vq7o")
 
 [node name="Ui" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -756,34 +755,29 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="Ui/PuaseMenu"]
+[node name="VictoryScreen" type="Control" parent="Ui"]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Ui/VictoryScreen"]
+layout_mode = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Ui/PuaseMenu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui/VictoryScreen/MarginContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "place holder"
 label_settings = ExtResource("3_bb42l")
 
-[node name="Button" type="Button" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_c82qv")
 text = "Restart
 "
-
-[node name="Button2" type="Button" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme = SubResource("Theme_8t3af")
-text = "22
-"
-
-[node name="VictoryScreen" type="Control" parent="Ui"]
-visible = false
-layout_mode = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rdba1")
@@ -791,9 +785,11 @@ environment = SubResource("Environment_rdba1")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.67462)
 light_color = Color(0.961667, 0.9, 1, 1)
+light_energy = 0.3
 script = SubResource("GDScript_ukgk2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
 visible = false
@@ -825,5 +821,6 @@ skeleton = NodePath("../..")
 
 [connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
 [connection signal="property_list_changed" from="objective" to="objective" method="_on_property_list_changed"]
+[connection signal="button_up" from="Ui/VictoryScreen/MarginContainer/VBoxContainer/Button" to="." method="_on_button_button_up"]
 
 [editable path="CSGCombiner3D/planet5"]

@@ -18,6 +18,7 @@ extends RigidBody3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	%Fireworks.emitting = true
 	#print(self.get_center_of_mass())
 	pass
 
@@ -101,7 +102,8 @@ func breaking_thrusters():
 	
 
 func win():
-	%Fireworks.emitting = true
+	print("bob")
+	#%Fireworks.emitting = true
 
 
 

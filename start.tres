@@ -1,0 +1,67 @@
+[gd_resource type="Shader" format=3 uid="uid://cdw72rdg3a3tf"]
+
+[resource]
+code = "shader_type spatial;
+uniform sampler2D emission_texture: hint_default_white;
+uniform sampler2D normal_texture: hint_default_black;
+uniform sampler2D noise_texture: hint_default_black;
+uniform vec3 color: source_color;
+uniform vec3 objective_position;
+uniform float speed;
+uniform float pulse_speed;
+
+varying vec2 global_position;
+varying vec2 target_position;
+
+void vertex() {
+	
+	global_position =  VERTEX.xy;
+	
+	target_position = vec4( MODEL_MATRIX * vec4(objective_position.xy,0,1) ).xy;
+	
+	UV = UV * vec2(3,3);
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
+	if(ALPHA < 0.001){
+		
+		//discard;
+	}
+	
+	
+	float distance_to_objective = (distance(global_position, target_position));
+	float inversesqrt_distance_to_objective = inversesqrt(distance_to_objective * 10.0);
+	
+	
+	
+	ALPHA *= inversesqrt_distance_to_objective * 15.0;
+	
+	
+	
+	
+	ALPHA = (texture(emission_texture, vec2(0.00002 *(distance(global_position.xy, target_position.xy)),0.0))).x;
+	
+	
+	//ALBEDO = vec3(0,0,1) * inversesqrt(distance(global_position, target_position)) * 100.0;
+	
+	float noise_multiplier =  TIME * speed;
+	
+	float slow_pulse_multiplier =  abs(sin(TIME * pulse_speed)) + 0.6 ;
+	
+	ALBEDO = color + (texture(noise_texture,normalize(UV / vec2(2.5,12.5)) - (normalize( global_position - target_position)) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 15.0);
+	
+	EMISSION =  ALBEDO * (20.0);
+	
+	ALPHA *= slow_pulse_multiplier;
+	
+	NORMAL = texture(emission_texture, vec2(UV.x, UV.y)).rgb;
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"

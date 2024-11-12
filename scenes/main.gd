@@ -1,6 +1,6 @@
-extends Node3D
+extends Node
 
-
+@export var Scene = preload("res://scenes/level_1.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -10,9 +10,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func restart():
-	get_parent().main_menu()
-	queue_free()
 
-func _on_button_button_up() -> void:
-	restart()
+func reset():
+	var instance = Scene.instantiate()
+	self.add_child(instance)
+	%MainMenu.hide()
+
+func main_menu():
+	%MainMenu.show
