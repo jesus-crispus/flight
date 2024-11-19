@@ -1,0 +1,11 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://bo56x6eydyk7b"]
+
+[sub_resource type="SystemFont" id="SystemFont_5x0hm"]
+font_names = PackedStringArray("Berlin Sans FB")
+font_weight = 550
+oversampling = 5.0
+
+[resource]
+base_font = SubResource("SystemFont_5x0hm")
+variation_transform = Transform2D(1, 0.345, 0, 1, 0, 0)
+spacing_space = 10

@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://crt65xu8olf50"]
+[gd_scene load_steps=23 format=3 uid="uid://crt65xu8olf50"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_4ppyf"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_0em3p"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://gun.gd" id="3_ayxod"]
 [ext_resource type="Script" path="res://engine.gd" id="4_ubfvq"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_b6y4e"]
+[ext_resource type="PackedScene" uid="uid://b2pknh7d5g1u1" path="res://gpu_particles_high.tscn" id="7_wpsxy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -92,85 +93,6 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	pass
 "
-
-[sub_resource type="Curve" id="Curve_bqauu"]
-_data = [Vector2(0, 1), 0.0, -0.226728, 0, 0, Vector2(1, 0.186433), -2.02555, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_cg8db"]
-curve = SubResource("Curve_bqauu")
-
-[sub_resource type="Gradient" id="Gradient_rmsrc"]
-colors = PackedColorArray(1, 0.806, 0.03, 1, 1, 0.25, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ury25"]
-gradient = SubResource("Gradient_rmsrc")
-
-[sub_resource type="Gradient" id="Gradient_d553j"]
-offsets = PackedFloat32Array(0, 0.228873, 0.778169)
-colors = PackedColorArray(1, 1, 1, 1, 0.140845, 0.140845, 0.140845, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_lm51r"]
-gradient = SubResource("Gradient_d553j")
-
-[sub_resource type="Curve" id="Curve_vha8u"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.740741, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_c8cns"]
-curve = SubResource("Curve_vha8u")
-
-[sub_resource type="Curve" id="Curve_21jd5"]
-_data = [Vector2(0, 0.321483), 0.0, 0.240047, 0, 0, Vector2(0.675926, 1), -0.0300573, -0.0300573, 0, 0, Vector2(1, 0.483737), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_dgcbg"]
-curve = SubResource("Curve_21jd5")
-
-[sub_resource type="Curve" id="Curve_q3v4k"]
-max_value = 3.0
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 2.08548), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_jpcm8"]
-curve = SubResource("Curve_q3v4k")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
-inherit_velocity_ratio = 1.0
-direction = Vector3(0, -1, 0)
-spread = 15.652
-initial_velocity_min = 26.32
-initial_velocity_max = 26.32
-gravity = Vector3(0, 0, 0)
-scale_min = 0.4
-scale_curve = SubResource("CurveTexture_dgcbg")
-scale_over_velocity_curve = SubResource("CurveTexture_jpcm8")
-color_ramp = SubResource("GradientTexture1D_lm51r")
-color_initial_ramp = SubResource("GradientTexture1D_ury25")
-alpha_curve = SubResource("CurveTexture_cg8db")
-emission_curve = SubResource("CurveTexture_c8cns")
-collision_mode = 1
-collision_friction = 0.0
-collision_bounce = 0.3
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhrmw"]
-transparency = 1
-depth_draw_mode = 1
-vertex_color_use_as_albedo = true
-albedo_color = Color(0.99, 0.4455, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_6mc63"]
-material = SubResource("StandardMaterial3D_hhrmw")
-radius = 1.0
-height = 2.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6bl3f"]
-no_depth_test = true
-shading_mode = 0
-albedo_color = Color(1, 0, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_7y3pv"]
-material = SubResource("StandardMaterial3D_6bl3f")
 
 [sub_resource type="GDScript" id="GDScript_pojkl"]
 script/source = "extends OmniLight3D
@@ -319,27 +241,7 @@ script = ExtResource("4_ubfvq")
 stream = ExtResource("6_b6y4e")
 parameters/looping = true
 
-[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="thruster"]
-volume_db = 80.0
-pitch_scale = 4.0
-autoplay = true
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="thruster"]
-process_priority = 1
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4, 0)
-top_level = true
-amount = 1000
-lifetime = 2.0
-randomness = 1.0
-fixed_fps = 60
-visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
-draw_order = 2
-process_material = SubResource("ParticleProcessMaterial_e3xkk")
-draw_pass_1 = SubResource("SphereMesh_6mc63")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="thruster/GPUParticles3D"]
-visible = false
-mesh = SubResource("SphereMesh_7y3pv")
+[node name="GPUParticles3D" parent="thruster" instance=ExtResource("7_wpsxy")]
 
 [node name="OmniLight3D" type="OmniLight3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.76665, 2.84217e-14)

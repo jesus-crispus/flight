@@ -1,4 +1,9 @@
-extends Area3D
+extends Node3D
+
+
+@export var particle_high: String
+@export var particle_low: String
+
 
 @export var thrust: float
 @export var curve: Curve
@@ -9,14 +14,29 @@ extends Area3D
 @onready var ship_resourse: ShipResource = get_parent().ship_resourse
 
 
-@onready var particle_system: GPUParticles3D = $GPUParticles3D
+@onready var particle_system: GPUParticles3D# = $GPUParticles3D
 @onready var liniar_damp = (1 - ProjectSettings.get_setting("physics/3d/default_linear_damp") ) / ProjectSettings.get_setting("physics/common/physics_ticks_per_second")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
-
+	var particle_packed_scene: PackedScene
+	
+	if Global.high_graphics == true:
+		particle_packed_scene = load(particle_high)
+		print("particle_high")
+	else :
+		particle_packed_scene = load(particle_low)
+		print("particle_low")
+	
+	var instance = particle_packed_scene.instantiate()
+	self.add_child(instance)
+	
+	particle_system = instance
+	
+	
+	
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if ship_resourse.changed:
@@ -28,7 +48,7 @@ func _process(delta: float) -> void:
 		#$OmniLight3D.update_range(throttle)
 		$SpotLight3D.update_range(throttle)
 		$SpotLight3D2.update_range(throttle)
-		$SpotLight3D3.update_range(throttle)
+		#$SpotLight3D3.update_range(throttle)
 		
 		particle_system.amount_ratio = throttle 
 

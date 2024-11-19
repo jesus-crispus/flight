@@ -1,7 +1,7 @@
 extends RigidBody3D
 
 @export var ship_resourse: ShipResource
-
+@export var enviorment_var : WorldEnvironment
 
 @onready var thrust_curve: Curve = ship_resourse.thrust_curve
 
@@ -18,6 +18,7 @@ extends RigidBody3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	#%Camera3D.environment = enviorment_var
 	%Fireworks.emitting = true
 	#print(self.get_center_of_mass())
 	pass

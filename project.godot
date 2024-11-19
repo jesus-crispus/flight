@@ -16,6 +16,10 @@ config/features=PackedStringArray("4.3", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"
 
+[autoload]
+
+Global="*res://global.gd"
+
 [display]
 
 window/size/viewport_width=1920
@@ -80,3 +84,7 @@ strafe_right={
 3d/run_on_separate_thread=true
 3d/default_gravity=0.0
 3d/default_linear_damp=0.0
+
+[rendering]
+
+lightmapping/denoising/denoiser=1

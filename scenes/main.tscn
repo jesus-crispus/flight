@@ -1,15 +1,18 @@
-[gd_scene load_steps=29 format=3 uid="uid://bgrr1tmj7vcar"]
+[gd_scene load_steps=32 format=3 uid="uid://bgrr1tmj7vcar"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_wk351"]
 [ext_resource type="Shader" uid="uid://cdw72rdg3a3tf" path="res://start.tres" id="2_mu2lj"]
+[ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="3_a2fmx"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_cjmct"]
+[ext_resource type="Theme" uid="uid://nl43u2d50qm2" path="res://ui/theme.tres" id="3_lywol"]
 
 [sub_resource type="GDScript" id="GDScript_iivcd"]
 script/source = "extends CanvasLayer
 
 @export var curve: Curve
+@export var x_curve: Curve
 @export var speed: float
-var star_animation : bool = false
+var start_animation : bool = false
 var time: float = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,22 +21,23 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if star_animation:
+	if start_animation:
 		time += delta * speed
 		%MeshInstance3D.position.z = -curve.sample(time)
+		#%MeshInstance3D.position.x = x_curve.sample(time)
 		if time >= 1:
 			reset_animation()
 
 
 func reset_animation():
 	get_parent().reset()
-	star_animation = false
+	start_animation = false
 	time = 0
-	self.hide()
-	
+	%Ui.show()
+	%MeshInstance3D.position.z = -560
 
 func _on_button_button_up() -> void:
-	star_animation = true
+	start_animation = true
 	%Ui.hide()
 "
 
@@ -43,13 +47,36 @@ max_value = 560.0
 _data = [Vector2(0, 560), 0.0, 0.000265432, 0, 0, Vector2(1, 1), -1558.97, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="SystemFont" id="SystemFont_ntehk"]
-font_names = PackedStringArray("Rockwell")
-subpixel_positioning = 0
+[sub_resource type="Curve" id="Curve_5y8j7"]
+min_value = -10.0
+max_value = 5.0
+_data = [Vector2(0, 0.0815217), 0.0, 0.0, 0, 0, Vector2(0.25, 1.25), 0.0, 0.0, 0, 0, Vector2(0.5, -10), 0.0, 0.0, 0, 0, Vector2(0.85, 5), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+metadata/_snap_enabled = true
+metadata/_snap_count = 20
 
-[sub_resource type="Theme" id="Theme_sl6dp"]
-Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
-Button/fonts/font = SubResource("SystemFont_ntehk")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7praq"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_55lfo"]
+font = ExtResource("3_a2fmx")
+font_size = 90
+font_color = Color(0, 0, 0, 1)
+outline_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 11
+shadow_color = Color(0, 0, 0, 0.992157)
+shadow_offset = Vector2(-5, 5)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v5kqx"]
+font = ExtResource("3_a2fmx")
+font_size = 55
+font_color = Color(0, 0, 0, 1)
+outline_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 11
+shadow_color = Color(0, 0, 0, 0.992157)
+shadow_offset = Vector2(-5, 5)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_jsjxk"]
 noise_type = 2
@@ -183,9 +210,6 @@ detail_normal = SubResource("NoiseTexture2D_namg0")
 material = SubResource("StandardMaterial3D_2bl60")
 size = Vector2(1980, 1080)
 
-[sub_resource type="Environment" id="Environment_s7p0c"]
-background_mode = 2
-
 [node name="Main" type="Node"]
 script = ExtResource("1_wk351")
 
@@ -193,51 +217,123 @@ script = ExtResource("1_wk351")
 unique_name_in_owner = true
 script = SubResource("GDScript_iivcd")
 curve = SubResource("Curve_g16n4")
-speed = 0.4
+x_curve = SubResource("Curve_5y8j7")
+speed = 0.3
 
 [node name="Ui" type="MarginContainer" parent="MainMenu"]
 unique_name_in_owner = true
+modulate = Color(1, 0.98, 0.98, 1)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 138.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_vertical = 15
 
 [node name="PuaseMenu" type="PanelContainer" parent="MainMenu/Ui"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_7praq")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/Ui"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Ui"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="MainMenu/Ui/PuaseMenu"]
+[node name="Label" type="Label" parent="MainMenu/Ui/VBoxContainer"]
+visible = false
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Ui/PuaseMenu/MarginContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainMenu/Ui/PuaseMenu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "SPACE"
+text = "EVENT HORIZON"
 label_settings = ExtResource("3_cjmct")
 
-[node name="Button" type="Button" parent="MainMenu/Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="MainMenu/Ui/VBoxContainer"]
 layout_mode = 2
-theme = SubResource("Theme_sl6dp")
-text = "Start
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+theme = ExtResource("3_lywol")
+toggle_mode = true
+text = "START
 "
+flat = true
+
+[node name="Label" type="Label" parent="MainMenu/Ui/VBoxContainer/Button"]
+z_index = -15
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.5
+offset_top = -36.5
+offset_right = 60.5
+offset_bottom = 36.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "START"
+label_settings = SubResource("LabelSettings_55lfo")
+
+[node name="CheckBox" type="CheckBox" parent="MainMenu/Ui/VBoxContainer"]
+layout_mode = 2
+tooltip_text = "for computers with actual graphics cards
+"
+focus_mode = 0
+theme = ExtResource("3_lywol")
+text = "HIGH GRAPTICS"
+
+[node name="Label" type="Label" parent="MainMenu/Ui/VBoxContainer/CheckBox"]
+z_index = -15
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 23.0
+offset_top = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "HIGH GRAPTICS"
+label_settings = SubResource("LabelSettings_v5kqx")
 
 [node name="Camera3D" type="Camera3D" parent="MainMenu"]
+current = true
 size = 26.915
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MainMenu/Camera3D"]
 unique_name_in_owner = true
+process_priority = 80
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -560)
-visible = false
 mesh = SubResource("QuadMesh_o20sq")
 skeleton = NodePath("../..")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="MainMenu/Camera3D"]
-environment = SubResource("Environment_s7p0c")
+[node name="Label3D" type="Label3D" parent="MainMenu/Camera3D/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15.505, 526.98)
+pixel_size = 0.047
+render_priority = 127
+outline_render_priority = 1
+modulate = Color(0, 0, 0, 1)
+outline_modulate = Color(0.411765, 0.00784314, 0, 1)
+text = "EVENT HORIZON"
+font = ExtResource("3_a2fmx")
+font_size = 128
+outline_size = 15
 
-[connection signal="button_up" from="MainMenu/Ui/PuaseMenu/MarginContainer/VBoxContainer/Button" to="MainMenu" method="_on_button_button_up"]
+[node name="Label3D2" type="Label3D" parent="MainMenu/Camera3D/MeshInstance3D/Label3D"]
+pixel_size = 0.047
+offset = Vector2(-5, -5)
+outline_render_priority = 0
+modulate = Color(0, 0, 0, 1)
+text = "EVENT HORIZON"
+font = ExtResource("3_a2fmx")
+font_size = 128
+outline_size = 15
+
+[connection signal="button_up" from="MainMenu/Ui/VBoxContainer/Button" to="MainMenu" method="_on_button_button_up"]
+[connection signal="toggled" from="MainMenu/Ui/VBoxContainer/CheckBox" to="." method="_on_check_box_toggled"]

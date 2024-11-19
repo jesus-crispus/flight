@@ -1,14 +1,13 @@
 [gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://c8o1joaul38x5"]
 
-[sub_resource type="SystemFont" id="SystemFont_pri3x"]
-font_names = PackedStringArray("Bahnschrift")
+[ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="1_4a36c"]
 
 [resource]
-font = SubResource("SystemFont_pri3x")
+font = ExtResource("1_4a36c")
 font_size = 128
-font_color = Color(0.834614, 0.834614, 0.834614, 1)
-outline_size = 10
-outline_color = Color(0.59, 0, 0, 1)
+font_color = Color(0, 0, 0, 1)
+outline_size = 15
+outline_color = Color(0.41, 0.00683333, 0, 1)
 shadow_size = 11
 shadow_color = Color(0.0430392, 0.0430392, 0.0430392, 1)
 shadow_offset = Vector2(-5, 5)

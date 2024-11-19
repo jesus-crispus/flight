@@ -1,12 +1,15 @@
-[gd_scene load_steps=66 format=3 uid="uid://rp6iui1p8m68"]
+[gd_scene load_steps=65 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
 [ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
 [ext_resource type="Shader" path="res://scenes/black_hole.gdshader" id="3_1oyxv"]
+[ext_resource type="Material" uid="uid://b6qewpbt1pesj" path="res://shaders/test.tres" id="3_7eyb3"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
 [ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
 [ext_resource type="Shader" path="res://scenes/black_hole_particle.gdshader" id="4_uubri"]
-[ext_resource type="Texture2D" uid="uid://b4l5p6srhnj6m" path="res://icon.svg" id="5_m1u73"]
+[ext_resource type="Shader" path="res://shaders/level_1.gdshader" id="5_3he66"]
+[ext_resource type="Theme" uid="uid://nl43u2d50qm2" path="res://ui/theme.tres" id="9_344wi"]
+[ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="10_tj28u"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
 noise_type = 5
@@ -37,7 +40,6 @@ metallic = 1.0
 roughness = 0.56
 normal_enabled = true
 normal_texture = SubResource("NoiseTexture2D_2qk16")
-uv1_scale = Vector3(10, 50, 1)
 
 [sub_resource type="Curve" id="Curve_kw0xm"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -75,203 +77,10 @@ shape = 0
 size = 4.02
 curve = SubResource("Curve_vtjbv")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_jsjxk"]
-noise_type = 2
-frequency = 0.0082
-cellular_return_type = 3
-domain_warp_type = 1
-domain_warp_frequency = 0.004
-domain_warp_fractal_octaves = 10
-domain_warp_fractal_gain = 1.41
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qg64r"]
-width = 1000
-height = 1000
-seamless = true
-noise = SubResource("FastNoiseLite_jsjxk")
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7noj"]
-width = 2000
-height = 2000
-seamless = true
-as_normal_map = true
-bump_strength = 50.0
-noise = SubResource("FastNoiseLite_jsjxk")
-
-[sub_resource type="Gradient" id="Gradient_eyeai"]
-offsets = PackedFloat32Array(0.00534759, 0.125668, 0.240642, 0.355615, 0.518717, 0.663102, 0.796791, 0.983957)
-colors = PackedColorArray(0.65, 0.169, 0.169, 1, 0.65, 0.33735, 0.169, 1, 0.65, 0.633967, 0.169, 1, 0.4576, 0.65, 0.169, 1, 0.169, 0.65, 0.353383, 1, 0.169, 0.609917, 0.65, 1, 0.169, 0.19305, 0.65, 1, 0.65, 0, 0.639166, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wdul1"]
-noise_type = 0
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xso74"]
-seamless = true
-color_ramp = SubResource("Gradient_eyeai")
-noise = SubResource("FastNoiseLite_wdul1")
-
-[sub_resource type="Gradient" id="Gradient_8wpif"]
-offsets = PackedFloat32Array(0, 0.470588, 0.997326)
-colors = PackedColorArray(0, 0, 0, 1, 0.108721, 0.108721, 0.108721, 1, 0.174028, 0.174028, 0.174028, 1)
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_264ir"]
-seamless = true
-color_ramp = SubResource("Gradient_8wpif")
-noise = SubResource("FastNoiseLite_wdul1")
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_namg0"]
-seamless = true
-as_normal_map = true
-bump_strength = 32.0
-noise = SubResource("FastNoiseLite_wdul1")
-
-[sub_resource type="Gradient" id="Gradient_xu7pt"]
-offsets = PackedFloat32Array(0, 0.516908, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_oscgd"]
-noise_type = 3
-frequency = 0.0179
-fractal_type = 2
-fractal_weighted_strength = 1.0
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_oe3k0"]
-seamless = true
-color_ramp = SubResource("Gradient_xu7pt")
-noise = SubResource("FastNoiseLite_oscgd")
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_armlv"]
-width = 1000
-height = 1000
-seamless = true
-noise = SubResource("FastNoiseLite_jsjxk")
-
-[sub_resource type="Shader" id="Shader_8x8b5"]
-code = "shader_type spatial;
-uniform sampler2D emission_texture: hint_default_white;
-uniform sampler2D normal_texture: hint_default_black;
-uniform sampler2D noise_texture: hint_default_black;
-uniform vec3 color: source_color;
-uniform vec3 objective_position;
-uniform float speed;
-uniform float pulse_speed;
-
-varying vec2 global_position;
-varying vec2 target_position;
-
-void vertex() {
-
-	global_position =  VERTEX.xy;
-
-	target_position = vec4( MODEL_MATRIX * vec4(objective_position.xy,0,1) ).xy;
-
-	UV = UV * vec2(2.5,12.5);
-	// Called for every vertex the material is visible on.
-}
-
-void fragment() {
-	// Called for every pixel the material is visible on.
-	ALPHA = (texture(emission_texture, vec2(UV.x, UV.y)).x);
-	if(ALPHA < 0.001){
-
-		discard;
-	}
-
-
-	float distance_to_objective = (distance(global_position, target_position));
-	float inversesqrt_distance_to_objective = inversesqrt(distance_to_objective * 10.0);
-
-
-
-	ALPHA *= inversesqrt_distance_to_objective * 15.0;
-
-
-
-
-	//ALPHA = (texture(emission_texture, vec2(0.00002 *(distance(global_position.xy, target_position.xy)),0.0))).x;
-
-
-	//ALBEDO = vec3(0,0,1) * inversesqrt(distance(global_position, target_position)) * 100.0;
-
-	float noise_multiplier =  TIME * speed;
-
-	float slow_pulse_multiplier =  abs(sin(TIME * pulse_speed)) + 0.6 ;
-
-	ALBEDO = color;// + (texture(noise_texture,normalize(UV / vec2(2.5,12.5)) - (normalize( global_position - target_position)) + noise_multiplier).xyz) - (inversesqrt_distance_to_objective * 15.0);
-
-	EMISSION =  ALBEDO * (20.0);
-
-	ALPHA *= slow_pulse_multiplier;
-
-	NORMAL = texture(emission_texture, vec2(UV.x, UV.y)).rgb;
-}
-
-//void light() {
-	// Called for every pixel for every light affecting the material.
-	// Uncomment to replace the default light processing function with this one.
-//}
-"
-
-[sub_resource type="Gradient" id="Gradient_xwj4g"]
-offsets = PackedFloat32Array(0, 0.369509, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.0166664, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_xodnf"]
-frequency = 0.0151
-fractal_type = 3
-domain_warp_enabled = true
-domain_warp_type = 2
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6d6pf"]
-seamless = true
-color_ramp = SubResource("Gradient_xwj4g")
-noise = SubResource("FastNoiseLite_xodnf")
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ps03"]
-seamless = true
-as_normal_map = true
-color_ramp = SubResource("Gradient_xu7pt")
-noise = SubResource("FastNoiseLite_oscgd")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_cqtei"]
-render_priority = 0
-shader = SubResource("Shader_8x8b5")
-shader_parameter/color = Color(0, 0.556863, 0.560784, 1)
-shader_parameter/objective_position = Vector3(0, 2250, 0)
-shader_parameter/speed = 0.385
-shader_parameter/pulse_speed = 0.9
-shader_parameter/emission_texture = SubResource("NoiseTexture2D_oe3k0")
-shader_parameter/normal_texture = SubResource("NoiseTexture2D_2ps03")
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_6d6pf")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tapvg"]
-next_pass = SubResource("ShaderMaterial_cqtei")
-albedo_color = Color(0.264383, 0.340383, 0.375796, 1)
-albedo_texture = SubResource("NoiseTexture2D_qg64r")
-roughness = 0.54
-emission = Color(0, 0.555164, 0.559811, 1)
-emission_energy_multiplier = 100.0
-emission_operator = 1
-emission_texture = SubResource("NoiseTexture2D_oe3k0")
-normal_enabled = true
-normal_texture = SubResource("NoiseTexture2D_r7noj")
-clearcoat_roughness = 0.0
-anisotropy = 0.32
-anisotropy_flowmap = SubResource("NoiseTexture2D_r7noj")
-heightmap_enabled = true
-heightmap_deep_parallax = true
-heightmap_min_layers = 16
-heightmap_max_layers = 32
-heightmap_texture = SubResource("NoiseTexture2D_armlv")
-subsurf_scatter_strength = 0.1
-backlight = Color(0.741385, 0.741385, 0.741385, 1)
-detail_mask = SubResource("NoiseTexture2D_264ir")
-detail_albedo = SubResource("NoiseTexture2D_xso74")
-detail_normal = SubResource("NoiseTexture2D_namg0")
-uv1_scale = Vector3(2.5, 12.5, 1)
-
 [sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
-material = SubResource("StandardMaterial3D_tapvg")
+lightmap_size_hint = Vector2i(5002, 25002)
+material = ExtResource("3_7eyb3")
+add_uv2 = true
 size = Vector2(1000, 5000)
 subdivide_width = 10
 subdivide_depth = 50
@@ -326,13 +135,14 @@ height = 60.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_w7ah8"]
 shader = ExtResource("4_uubri")
-shader_parameter/range_start = 30.0
+shader_parameter/range_start = 100.0
 shader_parameter/range_end = 100.0
-shader_parameter/angle_per_frame = 3.6
+shader_parameter/angle_per_frame = 1.0
+shader_parameter/black_hole_radius = 30.0
 
-[sub_resource type="Curve" id="Curve_17jq3"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
+[sub_resource type="Curve" id="Curve_u57oh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.501945, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5n66e"]
 cull_mode = 2
@@ -343,19 +153,96 @@ emission_energy_multiplier = 1111.0
 disable_receive_shadows = true
 use_particle_trails = true
 
-[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_xt37m"]
+[sub_resource type="TubeTrailMesh" id="TubeTrailMesh_ddhqb"]
 material = SubResource("StandardMaterial3D_5n66e")
-shape = 0
-sections = 10
-section_length = 0.001
-section_segments = 10
-curve = SubResource("Curve_17jq3")
+radius = 1.0
+radial_steps = 10
+section_length = 0.5
+curve = SubResource("Curve_u57oh")
+
+[sub_resource type="GDScript" id="GDScript_rur1k"]
+script/source = "extends GPUParticles3D
+
+@export var player : Node3D
+
+var stop = false
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	if stop == false:
+		self.global_position = (player.position + Vector3(0,0,-55))
+
+
+
+
+func _on_gravity_well_body_entered(body: Node3D) -> void:
+	stop = true
+	self.position = Vector3(0,0,0)
+	pass
+"
+
+[sub_resource type="Gradient" id="Gradient_dowio"]
+offsets = PackedFloat32Array(0, 0.316062, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.487047, 0.487047, 0.487047, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_adewu"]
+frequency = 0.038
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bhi3w"]
+seamless = true
+color_ramp = SubResource("Gradient_dowio")
+noise = SubResource("FastNoiseLite_adewu")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gayv3"]
+seamless = true
+as_normal_map = true
+bump_strength = 32.0
+noise = SubResource("FastNoiseLite_adewu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nnhns"]
+render_priority = 0
+shader = ExtResource("5_3he66")
+shader_parameter/multiplier = 37.785
+shader_parameter/x_speed = 0.375
+shader_parameter/y_speed = 0.35
+shader_parameter/normal_texture = SubResource("NoiseTexture2D_gayv3")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_bhi3w")
+
+[sub_resource type="SphereMesh" id="SphereMesh_v233w"]
+material = SubResource("ShaderMaterial_nnhns")
+radius = 30.0
+height = 60.0
+radial_segments = 512
+rings = 255
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_04y04"]
 radius = 30.0
 
+[sub_resource type="GDScript" id="GDScript_gbtjw"]
+script/source = "extends Area3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_53d7m"]
+radius = 500.0
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_aqdj6"]
-size = Vector3(13, 4, 7)
+size = Vector3(13, 9, 7)
 
 [sub_resource type="BoxMesh" id="BoxMesh_l3jdf"]
 size = Vector3(14, 4, 10)
@@ -383,53 +270,63 @@ frequency = 0.0505
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_8vq7o"]
 noise = SubResource("FastNoiseLite_y6xwl")
 
-[sub_resource type="SystemFont" id="SystemFont_26als"]
-font_names = PackedStringArray("Rockwell")
-subpixel_positioning = 0
+[sub_resource type="CylinderMesh" id="CylinderMesh_w7myr"]
+top_radius = 5.0
+bottom_radius = 15.0
+height = 40.0
+cap_top = false
+cap_bottom = false
 
-[sub_resource type="Theme" id="Theme_c82qv"]
-Button/colors/font_color = Color(0.99, 0.99, 0.99, 1)
-Button/fonts/font = SubResource("SystemFont_26als")
+[sub_resource type="SphereMesh" id="SphereMesh_r18dr"]
+radius = 5.0
+height = 10.0
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_g85y2"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_80axe"]
+top_radius = 15.0
+bottom_radius = 15.0
+height = 90.0
+cap_top = false
+cap_bottom = false
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_46el1"]
-noise = SubResource("FastNoiseLite_g85y2")
+[sub_resource type="PrismMesh" id="PrismMesh_e44c3"]
+size = Vector3(10, 5, 15)
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dkt5e"]
-sky_top_color = Color(0.877036, 0.75244, 0.992108, 1)
+[sub_resource type="CylinderMesh" id="CylinderMesh_ahsl5"]
+top_radius = 15.0
+bottom_radius = 12.0
+height = 19.259
+cap_top = false
 
-[sub_resource type="Sky" id="Sky_mgkrf"]
-sky_material = SubResource("ProceduralSkyMaterial_dkt5e")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n1r0a"]
+cull_mode = 2
 
-[sub_resource type="Environment" id="Environment_rdba1"]
-background_mode = 2
-sky = SubResource("Sky_mgkrf")
-tonemap_mode = 3
-tonemap_exposure = 0.38
-glow_enabled = true
-glow_normalized = true
-glow_map = SubResource("NoiseTexture2D_46el1")
-fog_enabled = true
-fog_light_color = Color(0.140262, 0.156196, 0.181246, 1)
-volumetric_fog_density = 0.0205
-volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
-volumetric_fog_emission = Color(0.0562916, 0.0562916, 0.0562916, 1)
-volumetric_fog_emission_energy = 0.0
+[sub_resource type="CylinderMesh" id="CylinderMesh_nuvnq"]
+material = SubResource("StandardMaterial3D_n1r0a")
+top_radius = 4.5
+bottom_radius = 6.5
+height = 7.0
+cap_bottom = false
 
-[sub_resource type="GDScript" id="GDScript_ukgk2"]
-script/source = "extends DirectionalLight3D
+[sub_resource type="BoxMesh" id="BoxMesh_57cv0"]
+size = Vector3(12, 3, 1)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_dqvee"]
+top_radius = 2.0
+bottom_radius = 2.0
+height = 4.03
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+[sub_resource type="BoxMesh" id="BoxMesh_b1tnx"]
+size = Vector3(12, 2, 1)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	rotate_y(0.1 * delta)
-"
+[sub_resource type="LabelSettings" id="LabelSettings_7bji5"]
+font = ExtResource("10_tj28u")
+font_size = 90
+font_color = Color(0, 0, 0, 1)
+outline_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 11
+shadow_color = Color(0, 0, 0, 0.992157)
+shadow_offset = Vector2(-5, 5)
 
 [sub_resource type="Shader" id="Shader_2oeqo"]
 code = "shader_type canvas_item;
@@ -488,10 +385,58 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5uktp"]
 shader = SubResource("Shader_2oeqo")
 shader_parameter/size = Vector2(16, 14)
-shader_parameter/range_start = 0.6
-shader_parameter/range_end = 1.0
+shader_parameter/range_start = 0.9
+shader_parameter/range_end = 1.1
 
 [sub_resource type="QuadMesh" id="QuadMesh_quq7r"]
+
+[sub_resource type="GDScript" id="GDScript_ukgk2"]
+script/source = "extends DirectionalLight3D
+
+
+@export var player : Node3D
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	#look_at(player.position + Vector3(0,0,101.669))
+	
+	pass
+	#rotate_y(0.1 * delta)
+"
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dkt5e"]
+sky_top_color = Color(0.993703, 0.986205, 0.987289, 1)
+sky_horizon_color = Color(0.31949, 0.32748, 0.340093, 1)
+sky_curve = 998.1
+sky_energy_multiplier = 0.5
+
+[sub_resource type="Sky" id="Sky_j3a2u"]
+sky_material = SubResource("ProceduralSkyMaterial_dkt5e")
+
+[sub_resource type="Environment" id="Environment_rdba1"]
+background_mode = 2
+sky = SubResource("Sky_j3a2u")
+tonemap_mode = 3
+tonemap_exposure = 0.11
+glow_enabled = true
+glow_normalized = true
+glow_strength = 0.71
+glow_mix = 0.453
+glow_blend_mode = 1
+fog_enabled = true
+fog_light_color = Color(0.271818, 0.265975, 0.269334, 1)
+fog_density = 0.008
+fog_aerial_perspective = 1.0
+volumetric_fog_density = 0.0205
+volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
+volumetric_fog_emission = Color(0.0562916, 0.0562916, 0.0562916, 1)
+volumetric_fog_emission_energy = 0.0
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_07gk5")
@@ -513,6 +458,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -254.794, 639.203, 0)
 
 [node name="planet5" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2000, 0)
+visible = false
 radius = 300.0
 radial_segments = 100
 rings = 50
@@ -543,63 +489,91 @@ trail_enabled = true
 process_material = SubResource("ParticleProcessMaterial_kokto")
 draw_pass_1 = SubResource("RibbonTrailMesh_qsh35")
 
-[node name="CSGSphere3D6" type="CSGSphere3D" parent="CSGCombiner3D"]
-transform = Transform3D(0.992384, 0.123186, 0, -0.123186, 0.992384, 0, 0, 0, 1, -20.5024, 615.98, 0)
-radius = 46.065
-radial_segments = 20
-rings = 10
-
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(0.992384, 0.123186, 0, -0.123186, 0.992384, 0, 0, 0, 1, -19.3464, 615.159, 24.9031)
-operation = 2
-size = Vector3(37.0229, 148.234, 72.56)
-
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
-rotation_edit_mode = 2
+visible = false
+material_override = ExtResource("3_7eyb3")
 mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2250, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 412.073, 877.471, 0)
 script = SubResource("GDScript_rmdts")
 radius = 30.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="objective"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
 mesh = SubResource("SphereMesh_r5nlw")
 
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="objective/MeshInstance3D"]
-amount = 2468
-lifetime = 60.0
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="objective/MeshInstance3D" node_paths=PackedStringArray("player")]
+amount = 1000
+lifetime = 30.0
 interpolate = false
-fract_delta = false
+visibility_aabb = AABB(-500, -500, -1, 1000, 1000, 2)
 local_coords = true
 trail_enabled = true
-trail_lifetime = 1.0
+trail_lifetime = 0.97
 process_material = SubResource("ShaderMaterial_w7ah8")
-draw_pass_1 = SubResource("RibbonTrailMesh_xt37m")
+draw_pass_1 = SubResource("TubeTrailMesh_ddhqb")
+script = SubResource("GDScript_rur1k")
+player = NodePath("../../../start_pad/RigidBody3D2")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="objective/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.1637)
+light_color = Color(0.38, 0.597, 1, 1)
+light_energy = 555555.0
+omni_range = 5000.0
+omni_attenuation = 2.0
+
+[node name="SpotLight3D" type="SpotLight3D" parent="objective/MeshInstance3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 54.2648)
+visible = false
+light_color = Color(0.63, 0.950667, 1, 1)
+light_energy = 5.5e+07
+spot_range = 20000.0
+spot_attenuation = 2.0
+spot_angle = 166.64
+spot_angle_attenuation = 3.13834
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="objective/MeshInstance3D"]
+transform = Transform3D(1.475, 0, 0, 0, -6.44743e-08, -1.475, 0, 1.475, -6.44743e-08, 0, 0, 0)
+mesh = SubResource("SphereMesh_v233w")
+
+[node name="GPUParticlesAttractorSphere3D" type="GPUParticlesAttractorSphere3D" parent="objective/MeshInstance3D"]
+strength = 128.0
+attenuation = 2.92817
+radius = 1000.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="objective"]
-visible = false
 shape = SubResource("SphereShape3D_04y04")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objective"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.112831, -3.99997, 57.4179)
 light_color = Color(0, 0.556863, 0.560784, 1)
 light_energy = 5555.0
 shadow_enabled = true
 omni_range = 500.0
 omni_attenuation = 1.185
 
+[node name="gravityWell" type="Area3D" parent="objective"]
+gravity_space_override = 1
+gravity_point = true
+gravity = 45555.0
+script = SubResource("GDScript_gbtjw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="objective/gravityWell"]
+shape = SubResource("SphereShape3D_53d7m")
+
 [node name="start_pad" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
 
 [node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0575333, -1691.91, -0.0123825)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1724.21, 0)
 gravity_scale = 0.93
 
 [node name="StaticBody3D" type="StaticBody3D" parent="start_pad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -32.0723, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="start_pad/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, 0)
 shape = SubResource("BoxShape3D_aqdj6")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/StaticBody3D"]
@@ -695,16 +669,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.85803)
 size = Vector3(14, 4, 4.25171)
 
 [node name="GPUParticlesCollisionBox3D3" type="GPUParticlesCollisionBox3D" parent="start_pad/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.89974)
-size = Vector3(14, 4, 4.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.83651)
+size = Vector3(14, 4, 4.37646)
 
 [node name="GPUParticlesCollisionBox3D4" type="GPUParticlesCollisionBox3D" parent="start_pad/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.97876, 1.5, 0)
-size = Vector3(6.25, 0.95, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.49512, 1.5, 0)
+size = Vector3(4.95361, 0.95, 10)
 
 [node name="GPUParticlesCollisionBox3D5" type="GPUParticlesCollisionBox3D" parent="start_pad/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.90417, 1.5, 0)
-size = Vector3(6.25, 0.95, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.44866, 1.5, 0)
+size = Vector3(4.16101, 0.95, 10)
+
+[node name="GPUParticlesCollisionBox3D6" type="GPUParticlesCollisionBox3D" parent="start_pad/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0249195, 1.2533, 0)
+size = Vector3(1.40052, 1, 7)
 
 [node name="GPUParticlesAttractorBox3D" type="GPUParticlesAttractorBox3D" parent="start_pad/StaticBody3D"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3.5, 0, 0)
@@ -730,6 +708,142 @@ strength = 128.0
 size = Vector3(9, 8.1792, 15)
 texture = SubResource("NoiseTexture3D_8vq7o")
 
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="start_pad/StaticBody3D"]
+transform = Transform3D(-1, -8.74228e-08, 0, 8.74228e-08, -1, 0, 0, 0, 1, -3.49691e-07, -4, 0)
+mesh = SubResource("BoxMesh_l3jdf")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 4)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0)
+mesh = SubResource("PrismMesh_kdpr5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D13" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 7.5, 0, 0)
+mesh = SubResource("PrismMesh_kdpr5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -5.5)
+mesh = SubResource("PrismMesh_de4pn")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D12" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 5.5)
+visible = false
+mesh = SubResource("PrismMesh_de4pn")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -4)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -6, 0, -6)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 6, 0, -6)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8, 0, -4)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8, 0, 4)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 6, 0, 6)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -6, 0, 6)
+mesh = SubResource("PrismMesh_3a2oq")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D14" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -7, 0, 5)
+mesh = SubResource("PrismMesh_ovye7")
+skeleton = NodePath("../MeshInstance3D9")
+
+[node name="MeshInstance3D15" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -7, 0, -5)
+mesh = SubResource("PrismMesh_ovye7")
+skeleton = NodePath("../MeshInstance3D9")
+
+[node name="MeshInstance3D16" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 7, 0, -5)
+mesh = SubResource("PrismMesh_ovye7")
+skeleton = NodePath("../MeshInstance3D9")
+
+[node name="MeshInstance3D17" type="MeshInstance3D" parent="start_pad/StaticBody3D/MeshInstance3D2"]
+transform = Transform3D(-0.707106, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707106, 7, 0, 5)
+mesh = SubResource("PrismMesh_ovye7")
+skeleton = NodePath("../MeshInstance3D9")
+
+[node name="MotherShip" type="Node3D" parent="start_pad"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/MotherShip"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25.9838, -17.8883)
+mesh = SubResource("CylinderMesh_w7myr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21, 0)
+mesh = SubResource("SphereMesh_r18dr")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -65, 0)
+mesh = SubResource("CylinderMesh_80axe")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -53.6179, 13.2075)
+mesh = SubResource("PrismMesh_e44c3")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -68.6179, 13.2075)
+mesh = SubResource("PrismMesh_e44c3")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -119, 0)
+mesh = SubResource("CylinderMesh_ahsl5")
+skeleton = NodePath("../MeshInstance3D4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D/MeshInstance3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -13.2786, 7.5695)
+mesh = SubResource("CylinderMesh_nuvnq")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D/MeshInstance3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.55537, -13.2786, -3.61003)
+mesh = SubResource("CylinderMesh_nuvnq")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D/MeshInstance3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.555, -13.279, -3.61002)
+mesh = SubResource("CylinderMesh_nuvnq")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -18, -46.4165, 0)
+mesh = SubResource("BoxMesh_57cv0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D/MeshInstance3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 0)
+mesh = SubResource("CylinderMesh_dqvee")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start_pad/MotherShip/MeshInstance3D/MeshInstance3D6/MeshInstance3D"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -3.77116, 0, -6.53184)
+mesh = SubResource("BoxMesh_b1tnx")
+
 [node name="Ui" type="MarginContainer" parent="."]
 unique_name_in_owner = true
 anchors_preset = 15
@@ -748,6 +862,7 @@ layout_mode = 2
 [node name="Label2" type="Label" parent="Ui/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "66666"
 
 [node name="PuaseMenu" type="PanelContainer" parent="Ui"]
 visible = false
@@ -757,48 +872,53 @@ size_flags_vertical = 4
 
 [node name="VictoryScreen" type="Control" parent="Ui"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Ui/VictoryScreen"]
-layout_mode = 0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Ui/VictoryScreen/MarginContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "place holder"
-label_settings = ExtResource("3_bb42l")
-
-[node name="Button" type="Button" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme = SubResource("Theme_c82qv")
-text = "Restart
-"
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_rdba1")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.67462)
-light_color = Color(0.961667, 0.9, 1, 1)
-light_energy = 0.3
-script = SubResource("GDScript_ukgk2")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -1
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
-visible = false
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_m1u73")
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui/VictoryScreen/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Victory"
+label_settings = ExtResource("3_bb42l")
+
+[node name="Button" type="Button" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("9_344wi")
+text = "Restart"
+flat = true
+
+[node name="Label" type="Label" parent="Ui/VictoryScreen/MarginContainer/VBoxContainer/Button"]
+z_index = -15
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.5
+offset_top = -36.5
+offset_right = 60.5
+offset_bottom = 36.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Restart"
+label_settings = SubResource("LabelSettings_7bji5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_5uktp")
@@ -819,8 +939,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 mesh = SubResource("QuadMesh_quq7r")
 skeleton = NodePath("../..")
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." node_paths=PackedStringArray("player")]
+transform = Transform3D(0.904493, -0.213295, 0.369322, 0.379053, 0.798949, -0.466906, -0.195481, 0.562305, 0.803493, 381.324, -1781.61, 198.901)
+light_color = Color(0.958, 1, 0.72, 1)
+light_energy = 2.387
+script = SubResource("GDScript_ukgk2")
+player = NodePath("../start_pad/RigidBody3D2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_rdba1")
+
 [connection signal="body_entered" from="objective" to="objective" method="_on_body_entered"]
 [connection signal="property_list_changed" from="objective" to="objective" method="_on_property_list_changed"]
+[connection signal="body_entered" from="objective/gravityWell" to="objective/MeshInstance3D/GPUParticles3D2" method="_on_gravity_well_body_entered"]
 [connection signal="button_up" from="Ui/VictoryScreen/MarginContainer/VBoxContainer/Button" to="." method="_on_button_button_up"]
 
 [editable path="CSGCombiner3D/planet5"]
