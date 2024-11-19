@@ -4,10 +4,10 @@
 
 [resource]
 font = ExtResource("1_4a36c")
-font_size = 128
+font_size = 65
 font_color = Color(0, 0, 0, 1)
 outline_size = 15
 outline_color = Color(0.41, 0.00683333, 0, 1)
 shadow_size = 11
 shadow_color = Color(0.0430392, 0.0430392, 0.0430392, 1)
-shadow_offset = Vector2(-5, 5)
+shadow_offset = Vector2(-10, 10)
