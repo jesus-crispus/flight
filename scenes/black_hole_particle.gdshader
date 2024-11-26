@@ -119,11 +119,19 @@ void process() {
 
 	mat3 basis_change = mat3(vec3(cos(radian)+ modifier,sin(radian)+ modifier,0.0), vec3(-sin(radian)+ modifier,cos(radian)+ modifier,0), vec3(0,0,1));
 
+
 	//mat4 scale_matrix = mat4(vec4(1,0,0,1),vec4(0,1,0,1),vec4(0,0,1,1),vec4(vec3(0,0,0),0));
+
+	scale = 1.0;
+	mat4 scale_remover = mat4(vec4(0,1,1,1),vec4(1,0,1,1),vec4(1,1,0,1),vec4(1,1,1,1));
+	mat4 scale_matrix = mat4(vec4(scale,0,0,0),vec4(0,scale,0,0),vec4(0,0,scale,0),vec4(0,0,0,0));
+	
+
 
 	//distance_from_singularity = distance_from_singularity - 0;
 
 	mat4 rotation = mat4(basis_change);// + mat4(vec4(0),vec4(0),vec4(0),vec4(vec3(0,0,0),0));
+
 	
 	//if (distance_from_singularity > black_hole_radius){
 		//respawn = true;
@@ -136,6 +144,23 @@ void process() {
 	//TRANSFORM = mat4(vec4(1,0,0,0), vec4(0,1,0,0), vec4(0,0,1,0), vec4(distance_from_singularity,0,0,1) );
 	TRANSFORM = rotation * TRANSFORM;//(TRANSFORM - mat4(vec4(0), vec4(0), vec4(0), vec4(-1,0,0,0) ));
 	//TRANSFORM =  scale_matrix * TRANSFORM ;
+
+
+	//if (distance_from_singularity > black_hole_radius){
+		//respawn = true;
+	//}
+
+
+
+
+	//COLOR.x = LIFETIME/ 10.0;
+	//TRANSFORM = mat4(vec4(1,0,0,0), vec4(0,1,0,0), vec4(0,0,1,0), vec4(distance_from_singularity,0,0,1) );
+	//mat4 basis = mat4(mat3(TRANSFORM));
+	//mat4 non_rotated_transorm = (TRANSFORM * inverse(basis));
+	//mat4 scaled_transorm = non_rotated_transorm  * scale_remover + scale_matrix;
+	//TRANSFORM = scaled_transorm * basis;
+	TRANSFORM = rotation * (TRANSFORM);//(TRANSFORM - mat4(vec4(0), vec4(0), vec4(0), vec4(-1,0,0,0) ));
+	
 
 
 
@@ -166,8 +191,11 @@ void process() {
 
 	USERDATA1.x = scale;
 	USERDATA1.y = distance_from_singularity;
+
 	
 	
 	
+
+
 
 }

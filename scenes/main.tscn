@@ -1,5 +1,6 @@
 [gd_scene load_steps=32 format=3 uid="uid://bgrr1tmj7vcar"]
 
+<<<<<<< Updated upstream
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_wk351"]
 [ext_resource type="Shader" uid="uid://cdw72rdg3a3tf" path="res://start.tres" id="2_mu2lj"]
 [ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="3_a2fmx"]
@@ -209,16 +210,239 @@ detail_normal = SubResource("NoiseTexture2D_namg0")
 [sub_resource type="QuadMesh" id="QuadMesh_o20sq"]
 material = SubResource("StandardMaterial3D_2bl60")
 size = Vector2(1980, 1080)
+=======
+<<<<<<< Updated upstream
+[ext_resource type="PackedScene" uid="uid://rp6iui1p8m68" path="res://scenes/level_1.tscn" id="1_u5irk"]
+[ext_resource type="PackedScene" uid="uid://deel2flqs461e" path="res://scenes/csg_combiner_3d.tscn" id="2_ypct0"]
+>>>>>>> Stashed changes
 
 [node name="Main" type="Node"]
 script = ExtResource("1_wk351")
 
+<<<<<<< Updated upstream
+=======
+[node name="level1" parent="." instance=ExtResource("1_u5irk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+=======
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_wk351"]
+[ext_resource type="PackedScene" uid="uid://rp6iui1p8m68" path="res://scenes/level_1.tscn" id="2_fvnxx"]
+[ext_resource type="Shader" uid="uid://cdw72rdg3a3tf" path="res://start.tres" id="2_mu2lj"]
+[ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="3_a2fmx"]
+[ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_cjmct"]
+[ext_resource type="Theme" uid="uid://nl43u2d50qm2" path="res://ui/theme.tres" id="3_lywol"]
+
+[sub_resource type="GDScript" id="GDScript_iivcd"]
+script/source = "extends CanvasLayer
+
+@export var curve: Curve
+
+@export var speed: float
+var start_animation : bool = false
+var time: float = 0
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if start_animation:
+		time += delta * speed
+		%MeshInstance3D.position.z = -curve.sample(time)
+		#%MeshInstance3D.position.x = x_curve.sample(time)
+		if time >= 1:
+			reset_animation()
+
+
+func reset_animation():
+	get_parent().reset()
+	start_animation = false
+	time = 0
+	%Ui.show()
+	%MeshInstance3D.position.z = -560
+
+func _on_button_button_up() -> void:
+	start_animation = true
+	%Ui.hide()
+"
+
+[sub_resource type="Curve" id="Curve_g16n4"]
+min_value = 1.0
+max_value = 560.0
+_data = [Vector2(0, 560), 0.0, 0.000265432, 0, 0, Vector2(1, 1), -1558.97, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7praq"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_55lfo"]
+font = ExtResource("3_a2fmx")
+font_size = 90
+font_color = Color(0, 0, 0, 1)
+outline_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 11
+shadow_color = Color(0, 0, 0, 0.992157)
+shadow_offset = Vector2(-5, 5)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v5kqx"]
+font = ExtResource("3_a2fmx")
+font_size = 55
+font_color = Color(0, 0, 0, 1)
+outline_size = 11
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 11
+shadow_color = Color(0, 0, 0, 0.992157)
+shadow_offset = Vector2(-5, 5)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_jsjxk"]
+noise_type = 2
+frequency = 0.0082
+cellular_return_type = 3
+domain_warp_type = 1
+domain_warp_frequency = 0.004
+domain_warp_fractal_octaves = 10
+domain_warp_fractal_gain = 1.41
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qg64r"]
+width = 1000
+height = 1000
+seamless = true
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7noj"]
+width = 2000
+height = 2000
+seamless = true
+as_normal_map = true
+bump_strength = 50.0
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="Gradient" id="Gradient_eyeai"]
+offsets = PackedFloat32Array(0.00534759, 0.125668, 0.240642, 0.355615, 0.518717, 0.663102, 0.796791, 0.983957)
+colors = PackedColorArray(0.65, 0.169, 0.169, 1, 0.65, 0.33735, 0.169, 1, 0.65, 0.633967, 0.169, 1, 0.4576, 0.65, 0.169, 1, 0.169, 0.65, 0.353383, 1, 0.169, 0.609917, 0.65, 1, 0.169, 0.19305, 0.65, 1, 0.65, 0, 0.639166, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wdul1"]
+noise_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xso74"]
+seamless = true
+color_ramp = SubResource("Gradient_eyeai")
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="Gradient" id="Gradient_8wpif"]
+offsets = PackedFloat32Array(0, 0.470588, 0.997326)
+colors = PackedColorArray(0, 0, 0, 1, 0.108721, 0.108721, 0.108721, 1, 0.174028, 0.174028, 0.174028, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_264ir"]
+seamless = true
+color_ramp = SubResource("Gradient_8wpif")
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_namg0"]
+seamless = true
+as_normal_map = true
+bump_strength = 32.0
+noise = SubResource("FastNoiseLite_wdul1")
+
+[sub_resource type="Gradient" id="Gradient_xu7pt"]
+offsets = PackedFloat32Array(0, 0.516908, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_oscgd"]
+noise_type = 3
+frequency = 0.0179
+fractal_type = 2
+fractal_weighted_strength = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_oe3k0"]
+seamless = true
+color_ramp = SubResource("Gradient_xu7pt")
+noise = SubResource("FastNoiseLite_oscgd")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_armlv"]
+width = 1000
+height = 1000
+seamless = true
+noise = SubResource("FastNoiseLite_jsjxk")
+
+[sub_resource type="Gradient" id="Gradient_xwj4g"]
+offsets = PackedFloat32Array(0, 0.369509, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.0166664, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xodnf"]
+frequency = 0.0151
+fractal_type = 3
+domain_warp_enabled = true
+domain_warp_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6d6pf"]
+seamless = true
+color_ramp = SubResource("Gradient_xwj4g")
+noise = SubResource("FastNoiseLite_xodnf")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ps03"]
+seamless = true
+as_normal_map = true
+color_ramp = SubResource("Gradient_xu7pt")
+noise = SubResource("FastNoiseLite_oscgd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7rgik"]
+render_priority = 0
+shader = ExtResource("2_mu2lj")
+shader_parameter/color = Color(0, 0.556863, 0.560784, 1)
+shader_parameter/objective_position = Vector3(0, 0, 0)
+shader_parameter/speed = 0.385
+shader_parameter/pulse_speed = 0.9
+shader_parameter/emission_texture = SubResource("NoiseTexture2D_oe3k0")
+shader_parameter/normal_texture = SubResource("NoiseTexture2D_2ps03")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_6d6pf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2bl60"]
+next_pass = SubResource("ShaderMaterial_7rgik")
+albedo_color = Color(0.264383, 0.340383, 0.375796, 1)
+albedo_texture = SubResource("NoiseTexture2D_qg64r")
+roughness = 0.54
+emission = Color(0, 0.555164, 0.559811, 1)
+emission_energy_multiplier = 100.0
+emission_operator = 1
+emission_texture = SubResource("NoiseTexture2D_oe3k0")
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_r7noj")
+clearcoat_roughness = 0.0
+anisotropy = 0.32
+anisotropy_flowmap = SubResource("NoiseTexture2D_r7noj")
+heightmap_enabled = true
+heightmap_deep_parallax = true
+heightmap_min_layers = 16
+heightmap_max_layers = 32
+heightmap_texture = SubResource("NoiseTexture2D_armlv")
+subsurf_scatter_strength = 0.1
+backlight = Color(0.741385, 0.741385, 0.741385, 1)
+detail_mask = SubResource("NoiseTexture2D_264ir")
+detail_albedo = SubResource("NoiseTexture2D_xso74")
+detail_normal = SubResource("NoiseTexture2D_namg0")
+
+[sub_resource type="QuadMesh" id="QuadMesh_o20sq"]
+material = SubResource("StandardMaterial3D_2bl60")
+size = Vector2(1980, 1080)
+
+[node name="Main" type="Node"]
+script = ExtResource("1_wk351")
+Scene = ExtResource("2_fvnxx")
+
+>>>>>>> Stashed changes
 [node name="MainMenu" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
 script = SubResource("GDScript_iivcd")
 curve = SubResource("Curve_g16n4")
+<<<<<<< Updated upstream
 x_curve = SubResource("Curve_5y8j7")
 speed = 0.3
+=======
+speed = 0.3
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 [node name="Ui" type="MarginContainer" parent="MainMenu"]
 unique_name_in_owner = true

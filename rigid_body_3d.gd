@@ -1,7 +1,21 @@
 extends RigidBody3D
 
+@export var victory_node: Control
+
 @export var ship_resourse: ShipResource
+<<<<<<< Updated upstream
 @export var enviorment_var : WorldEnvironment
+=======
+<<<<<<< Updated upstream
+=======
+@export var enviorment_var : WorldEnvironment
+@export var objective : Node3D
+
+@export var fallof_curve: Curve
+@export var fallof_start_distance: float
+>>>>>>> Stashed changes
+
+>>>>>>> Stashed changes
 
 @onready var thrust_curve: Curve = ship_resourse.thrust_curve
 
@@ -16,10 +30,23 @@ extends RigidBody3D
 @onready var speed_lable = %Label
 @onready var throttle_lable = %Label2
 
+
+var fallof: float
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+<<<<<<< Updated upstream
 	#%Camera3D.environment = enviorment_var
 	%Fireworks.emitting = true
+=======
+<<<<<<< Updated upstream
+=======
+	#self.position = get_parent().global_position 
+	#%Camera3D.environment = enviorment_var
+	%Fireworks.emitting = true
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 	#print(self.get_center_of_mass())
 	pass
 
@@ -35,16 +62,16 @@ func _input(event: InputEvent) -> void:
 	
 	if event.is_action_released("ui_accept"):
 		engine_on_off = false
-		ship_resourse.engine_on_off     = false
+		ship_resourse.engine_on_off = false
 		#$GPUParticles3D.emitting = false
 		#throttle = 0
 	
-	if event.is_action_pressed("breaking_thrusters"):
-		linear_damp = 1
-	
-	if event.is_action_released("breaking_thrusters"):
-		linear_damp = 0.7
-	
+	#if event.is_action_pressed("breaking_thrusters"):
+		#linear_damp = 1
+	#
+	#if event.is_action_released("breaking_thrusters"):
+		#linear_damp = 0.7
+	#
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
@@ -89,22 +116,36 @@ func main_engine():
 	
 	
 	
+	fallof = fallof_curve.sample(self.position.distance_to(objective.position)/fallof_start_distance)
 	
-	self.apply_central_force(self.basis.y * ((thrust_curve.sample(throttle) * mass * thrust) * physics_process_delta))
+	
+	
+	
+	self.apply_central_force(self.basis.y * ((thrust_curve.sample(throttle) * mass * (thrust * fallof)) * physics_process_delta))
 	speed_lable.text = "speed : " + str( int( abs(self.linear_velocity.x) + abs(self.linear_velocity.y) + abs(self.linear_velocity.z)))
 	throttle_lable.text = "throttle : " + str(throttle)
 
 
-func breaking_thrusters():
-	
-	pass
-	
-	
-	
+#func breaking_thrusters():
+	#
+	#pass
+	#
+	#
+	#
 
+<<<<<<< Updated upstream
 func win():
 	print("bob")
 	#%Fireworks.emitting = true
+=======
+<<<<<<< Updated upstream
+
+=======
+func win():
+	victory_node.show()
+	#%Fireworks.emitting = true
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 
 
@@ -126,3 +167,7 @@ func turn():
 	
 	self.apply_torque((Vector3(0,0, angular_force) * 20000))
 	#print(basis.x,"  ",Vector2(self.basis.x.x,self.basis.x.y),"  ",mouse_position_3d.x,"  ", mouse_position_3d.y, "   ", angular_force)
+
+
+func _on_softlock_prevention_timer_timeout() -> void:
+	win()

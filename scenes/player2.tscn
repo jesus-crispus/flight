@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 [gd_scene load_steps=66 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
@@ -9,6 +10,28 @@
 [ext_resource type="PackedScene" uid="uid://bo1ygydudhmjt" path="res://gpu_particles_low.tscn" id="7_12cih"]
 [ext_resource type="Material" uid="uid://bsmmu78ajxbuy" path="res://shaders/dark_ship_metal.tres" id="7_gxbf6"]
 [ext_resource type="Material" uid="uid://ct4cb8b6iokkc" path="res://shaders/shader_test.tres" id="9_uv3bc"]
+=======
+<<<<<<< Updated upstream
+[gd_scene load_steps=49 format=3 uid="uid://cth3jm5ceuech"]
+=======
+[gd_scene load_steps=61 format=3 uid="uid://cth3jm5ceuech"]
+>>>>>>> Stashed changes
+
+[ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
+[ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
+[ext_resource type="Script" path="res://gun.gd" id="4_8w4ri"]
+[ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
+[ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
+<<<<<<< Updated upstream
+=======
+[ext_resource type="Material" uid="uid://bsmmu78ajxbuy" path="res://shaders/dark_ship_metal.tres" id="7_gxbf6"]
+[ext_resource type="Material" uid="uid://ct4cb8b6iokkc" path="res://shaders/shader_test.tres" id="9_uv3bc"]
+>>>>>>> Stashed changes
+
+[sub_resource type="Curve" id="Curve_okcf5"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
+>>>>>>> Stashed changes
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -21,17 +44,139 @@ points = PackedVector3Array(0, 2, 0, 0, 2, 0.2, 1.8, 0, 0, 1.8, 0, 0.2, -1.8, 0,
 [sub_resource type="GDScript" id="GDScript_yqvit"]
 script/source = "extends Camera3D
 
+<<<<<<< Updated upstream
 var player: RigidBody3D
+=======
+@export var triger_distance_x10: float
+
+
+var lerp_start : Vector2
+var lerp_time : float
+
+var game_over: bool = false
+var softlock_active_prevention: bool = false
+
+
+var player: RigidBody3D
+var enviorment : WorldEnvironment
+var objective : Node3D
+
+@export var ending_curve : Curve 
+@export var ending_start_distance : float 
+
+
+
+var max_curve_output = 1
+
+var start_hight
+@export var zoom_start : float
+@export var curve : Curve
+@export var speed: float
+var start_animation : bool = true
+var time: float = 0
+
+var exposure : float
+
+>>>>>>> Stashed changes
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	player = get_parent()
+<<<<<<< Updated upstream
+=======
+	start_hight = self.position.z
+	self.position.z = start_hight + zoom_start
+	enviorment = player.enviorment_var 
+	exposure = enviorment.environment.tonemap_exposure
+	enviorment.environment.tonemap_exposure = 0
+	
+	
+	objective = player.objective
+	
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+
+	var distance = (self.global_position * Vector3(1,1,0)).distance_to(objective.position)
+	
+	if distance <= 30  and game_over == false:
+		game_over = true
+		set_as_top_level(true)
+		lerp_start.x = position.x
+		lerp_start.y = position.y
+	
+	#if distance <= 30 and softlock_active_prevention == false:
+		#softlock_active_prevention = true
+		##%SoftlockPreventionTimer.start()
+	
+	if game_over == true:
+		lerp_time = clampf(lerp_time +(delta * 0.1),0,1)
+		var lerp_vector = lerp(lerp_start,Vector2(0,0),lerp_time)
+
+		
+		self.position.x = lerp_vector.x
+		self.position.y = lerp_vector.y
+
+	var clamped_var = clampf(distance/ending_start_distance ,0,max_curve_output)
+	
+	if clamped_var <= 0.01:
+		pass
+		max_curve_output = clamped_var
+	
+	
+	var curve_sample = ending_curve.sample(clamped_var)
+
+	
+	self.position.z  = start_hight + curve_sample
+	
+	if  clamped_var *10 <= triger_distance_x10 :
+		#print(\"clamped_var : \",clamped_var)
+		game_over = true
+		
+		player.win()
+	
+	else:
+		
+		if start_animation:
+			time += delta * speed
+			
+			var multiplier = curve.sample(time)
+			
+			self.position.z = start_hight + (zoom_start * multiplier)
+			
+			enviorment.environment.tonemap_exposure = exposure * (1 - multiplier)
+			#print(\"exposure : \",enviorment.environment.tonemap_exposure)
+			#%MeshInstance3D.position.x = x_curve.sample(time)
+		if time >= 1:
+			start_animation = false
+			
+		
+		
+	if game_over == false:
+		look_at(player.position)
+"
+
+<<<<<<< Updated upstream
+[sub_resource type="CylinderMesh" id="CylinderMesh_2y68j"]
+top_radius = 0.1
+bottom_radius = 0.1
+height = 3.0
+
+[sub_resource type="GDScript" id="GDScript_65l02"]
+script/source = "extends Node3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+>>>>>>> Stashed changes
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+<<<<<<< Updated upstream
 	look_at(player.position)
 	
 "
@@ -39,6 +184,48 @@ func _process(delta: float) -> void:
 [sub_resource type="QuadMesh" id="QuadMesh_hq855"]
 material = ExtResource("9_uv3bc")
 size = Vector2(512, 256)
+=======
+
+
+func _physics_process(delta: float) -> void:
+	pass
+=======
+[sub_resource type="Curve" id="Curve_nbh7l"]
+min_value = -71.0
+max_value = 150.0
+_data = [Vector2(0, -71), 0.0, 3332.07, 0, 0, Vector2(0.160207, 84.0891), -172.348, -172.348, 0, 0, Vector2(1, 0), -10.8665, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_count = 100
+
+[sub_resource type="Curve" id="Curve_cpoe8"]
+_data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_hq855"]
+material = ExtResource("9_uv3bc")
+size = Vector2(10240, 5120)
+
+[sub_resource type="GDScript" id="GDScript_p32i3"]
+script/source = "extends MeshInstance3D
+
+var camera : Camera3D
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	camera = %Camera3D
+	self.position.x = camera.global_position.x
+	self.position.y = camera.global_position.y
+	mesh.material.set(\"shader_parameter/start_time\",float(Time.get_ticks_msec() / 1000))
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	self.position.x = camera.global_position.x
+	self.position.y = camera.global_position.y
+	
+	
+>>>>>>> Stashed changes
+"
+>>>>>>> Stashed changes
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_b2mkt"]
 bottom_radius = 0.2
@@ -53,6 +240,7 @@ bottom_radius = 0.3
 height = 0.5
 cap_bottom = false
 
+<<<<<<< Updated upstream
 [sub_resource type="GDScript" id="GDScript_30xwn"]
 script/source = "extends SpotLight3D
 
@@ -81,6 +269,9 @@ func update_range(throttle: float) -> void:
 	
 "
 
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 [sub_resource type="Curve" id="Curve_bqauu"]
 _data = [Vector2(0, 1), 0.0, -0.226728, 0, 0, Vector2(1, 0.186433), -2.02555, 0.0, 0, 0]
 point_count = 2
@@ -124,8 +315,11 @@ point_count = 2
 curve = SubResource("Curve_q3v4k")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
+<<<<<<< Updated upstream
 lifetime_randomness = 0.3
 particle_flag_disable_z = true
+=======
+>>>>>>> Stashed changes
 inherit_velocity_ratio = 1.0
 direction = Vector3(0, -1, 0)
 spread = 15.652
@@ -154,6 +348,47 @@ material = SubResource("StandardMaterial3D_hhrmw")
 radius = 1.0
 height = 2.0
 
+<<<<<<< Updated upstream
+=======
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6bl3f"]
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7y3pv"]
+material = SubResource("StandardMaterial3D_6bl3f")
+
+=======
+>>>>>>> Stashed changes
+[sub_resource type="GDScript" id="GDScript_30xwn"]
+script/source = "extends SpotLight3D
+
+var max_energy: float
+var angle: float
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	max_energy = light_energy
+	angle = spot_angle
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func update_range(throttle: float) -> void:
+	if throttle != 0:
+		light_energy = max_energy * throttle + randf_range(-25 + (-25 * throttle), 25 + (25 * throttle))
+		if light_energy < 0:
+			light_energy = 0
+	else:
+		light_energy = 0   
+	
+	
+	#spot_angle = angle - (throttle * 20)
+	
+"
+
+>>>>>>> Stashed changes
 [sub_resource type="SphereMesh" id="SphereMesh_uhqc2"]
 height = 0.73
 
@@ -215,6 +450,7 @@ height = 4.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tywdh"]
 transparency = 1
+<<<<<<< Updated upstream
 albedo_color = Color(1, 0, 0, 1)
 roughness = 0.0
 emission = Color(1, 0, 0, 1)
@@ -224,11 +460,17 @@ subsurf_scatter_enabled = true
 subsurf_scatter_strength = 1.0
 backlight = Color(1, 0, 0, 1)
 refraction_scale = 0.17
+=======
+albedo_color = Color(0.27, 0.695833, 1, 0.807843)
+roughness = 0.0
+rim_enabled = true
+>>>>>>> Stashed changes
 
 [sub_resource type="SphereMesh" id="SphereMesh_so1lr"]
 material = SubResource("StandardMaterial3D_tywdh")
 height = 1.985
 
+<<<<<<< Updated upstream
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ph5jh"]
 cull_mode = 2
 backlight = Color(2.45467e-06, 0.500774, 0.470374, 1)
@@ -329,6 +571,67 @@ curve = SubResource("Curve_tpahi")
 
 [sub_resource type="QuadMesh" id="QuadMesh_dtaom"]
 size = Vector2(55, 55)
+=======
+[sub_resource type="QuadMesh" id="QuadMesh_ein4f"]
+size = Vector2(55, 55)
+
+[sub_resource type="Shader" id="Shader_abvu8"]
+code = "shader_type spatial;
+//render_mode world_vertex_coords;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+	vec3 direction_to_world_origin = (normalize(vec4(-VERTEX,0) * MODEL_MATRIX) * inverse(MODEL_MATRIX)).xyz;
+	
+	//float multiplier = ;
+	
+	VERTEX  += clamp(dot(NORMAL,direction_to_world_origin),0,1) * direction_to_world_origin;
+	
+	
+	
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the material.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w4qtc"]
+render_priority = 0
+shader = SubResource("Shader_abvu8")
+
+[sub_resource type="SphereMesh" id="SphereMesh_s53op"]
+material = SubResource("ShaderMaterial_w4qtc")
+
+[sub_resource type="Curve" id="Curve_tyklo"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_xdqyo"]
+curve = SubResource("Curve_tyklo")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4gdhp"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 3000.0
+emission_ring_radius = 1500.0
+emission_ring_inner_radius = 30.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_xdqyo")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tcag3"]
+use_point_size = true
+point_size = 1.7
+
+[sub_resource type="PointMesh" id="PointMesh_xlcvd"]
+material = SubResource("StandardMaterial3D_tcag3")
+>>>>>>> Stashed changes
 
 [node name="RigidBody3D" type="RigidBody3D" groups=["player"]]
 top_level = true
@@ -341,13 +644,22 @@ linear_damp = 0.7
 angular_damp = 1.0
 script = ExtResource("1_ev10d")
 ship_resourse = ExtResource("2_tni1v")
+<<<<<<< Updated upstream
+=======
+fallof_curve = SubResource("Curve_okcf5")
+fallof_start_distance = 1000.0
+>>>>>>> Stashed changes
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, 0.455868, 0)
 shape = SubResource("CapsuleShape3D_35t6q")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+<<<<<<< Updated upstream
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 3.43911, 0)
+=======
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 4.9454, 0)
+>>>>>>> Stashed changes
 shape = SubResource("SphereShape3D_1ygqx")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
@@ -356,6 +668,7 @@ shape = SubResource("ConvexPolygonShape3D_o56j1")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
+<<<<<<< Updated upstream
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 94.894)
 current = true
 fov = 90.0
@@ -377,22 +690,89 @@ particle_low = "res://gpu_particles_low.tscn"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64578, 0)
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+<<<<<<< Updated upstream
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
+=======
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 95)
+>>>>>>> Stashed changes
+current = true
+near = 10.0
+script = SubResource("GDScript_yqvit")
+triger_distance_x10 = 0.007
+ending_curve = SubResource("Curve_nbh7l")
+ending_start_distance = 500.0
+zoom_start = 100.0
+curve = SubResource("Curve_cpoe8")
+speed = 0.24
+
+<<<<<<< Updated upstream
+[node name="Gun" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.482551, 4.51484, -0.229239)
+visible = false
+script = ExtResource("4_8w4ri")
+cooldown_time = 0.205
+=======
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.0065, -10.1778, -64.9079)
+top_level = true
+mesh = SubResource("QuadMesh_hq855")
+skeleton = NodePath("../..")
+script = SubResource("GDScript_p32i3")
+>>>>>>> Stashed changes
+
+[node name="Timer" type="Timer" parent="Gun"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Gun"]
+mesh = SubResource("CylinderMesh_2y68j")
+
+[node name="projectile_spawn_point" type="MeshInstance3D" parent="Gun/MeshInstance3D"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = SubResource("GDScript_65l02")
+
+[node name="Wepons" type="Node3D" parent="."]
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="Wepons"]
+transform = Transform3D(0.734524, 0.678583, 0, -0.678583, 0.734524, 0, 0, 0, 1, -0.0989494, -20.7843, 7.07388)
+visible = false
+size = Vector3(41.8624, 7.76978, 40.9887)
+
+[node name="thruster" type="Area3D" parent="."]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.07959, -4, 0)
+script = ExtResource("5_b5741")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64578, 0)
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_b2mkt")
 skeleton = NodePath("../../MeshInstance3D2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="thruster/MeshInstance3D5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.22786, 0)
+<<<<<<< Updated upstream
 layers = 3
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_03ru6")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster"]
 stream = ExtResource("6_eofso")
+<<<<<<< Updated upstream
 volume_db = 80.0
 parameters/looping = true
 
 [node name="GPUParticles3D" parent="thruster" instance=ExtResource("7_12cih")]
 visible = false
 
+=======
+parameters/looping = true
+
+<<<<<<< Updated upstream
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="thruster"]
+=======
+>>>>>>> Stashed changes
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 2.38214, 0)
 light_color = Color(1, 0.648667, 0.32, 1)
@@ -438,6 +818,7 @@ mesh = SubResource("CylinderMesh_03ru6")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster2"]
 stream = ExtResource("6_eofso")
+<<<<<<< Updated upstream
 volume_db = 80.0
 parameters/looping = true
 
@@ -449,11 +830,28 @@ visible = false
 amount = 200
 lifetime = 1.5
 randomness = 1.0
+=======
+>>>>>>> Stashed changes
+volume_db = 80.0
+pitch_scale = 4.0
+autoplay = true
+
+<<<<<<< Updated upstream
+[node name="GPUParticles3D" type="GPUParticles3D" parent="thruster"]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.07959, -4, 0)
+top_level = true
+amount = 500
+lifetime = 2.0
+randomness = 1.0
+fixed_fps = 60
+>>>>>>> Stashed changes
 visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
 draw_order = 2
 process_material = SubResource("ParticleProcessMaterial_e3xkk")
 draw_pass_1 = SubResource("SphereMesh_6mc63")
 
+<<<<<<< Updated upstream
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 4.02792, 0)
 light_color = Color(1, 0.648667, 0.32, 1)
@@ -476,76 +874,234 @@ distance_fade_length = 993.04
 spot_range = 55.0
 spot_angle = 135.6
 spot_angle_attenuation = 2.14355
+=======
+[node name="MeshInstance3D" type="MeshInstance3D" parent="thruster/GPUParticles3D"]
+mesh = SubResource("SphereMesh_7y3pv")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.69765, 0)
+=======
+[node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
+transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 4.02792, 0)
+>>>>>>> Stashed changes
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle_attenuation = 0.353554
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.38214, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle = 61.6
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="thruster"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5.90792, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 150.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 150.0
+spot_angle = 25.0
+script = SubResource("GDScript_30xwn")
+
+[node name="thruster2" type="Area3D" parent="."]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -4, 0)
+script = ExtResource("5_b5741")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="thruster2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.64578, 0)
+mesh = SubResource("CylinderMesh_b2mkt")
+skeleton = NodePath("../../MeshInstance3D2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="thruster2/MeshInstance3D5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.22786, 0)
+mesh = SubResource("CylinderMesh_03ru6")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster2"]
+stream = ExtResource("6_eofso")
+parameters/looping = true
+
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="thruster2"]
+volume_db = 80.0
+pitch_scale = 4.0
+autoplay = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="thruster2"]
+process_priority = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -4, 0)
+top_level = true
+amount = 500
+lifetime = 2.0
+randomness = 1.0
+fixed_fps = 60
+visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
+draw_order = 2
+process_material = SubResource("ParticleProcessMaterial_e3xkk")
+draw_pass_1 = SubResource("SphereMesh_6mc63")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="thruster2/GPUParticles3D"]
+mesh = SubResource("SphereMesh_7y3pv")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.69765, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle_attenuation = 0.353554
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="thruster2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 2.38214, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 100.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 100.0
+spot_attenuation = 1.41
+spot_angle = 61.6
+script = SubResource("GDScript_30xwn")
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="thruster2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5.90792, 0)
+light_color = Color(1, 0.648667, 0.32, 1)
+light_energy = 150.0
+light_specular = 3.749
+light_cull_mask = 4294967293
+spot_range = 150.0
+spot_angle = 25.0
+>>>>>>> Stashed changes
 script = SubResource("GDScript_30xwn")
 
 [node name="mouse" type="Node3D" parent="."]
 top_level = true
 
+<<<<<<< Updated upstream
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0675079, 1.21853)
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(0.987397, -0.0791308, 0.137058, 0.158262, 0.493699, -0.855111, -1.0334e-09, 0.866025, 0.5, 20, 2.015, 0)
+light_energy = 100.0
+spot_range = 250.0
+spot_attenuation = 0.1
+spot_angle = 4.03
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="."]
+transform = Transform3D(0.987381, 0.0799579, -0.136693, -0.158358, 0.493229, -0.855364, -0.000972033, 0.866217, 0.499667, -20, 2.06, 0.013)
+light_energy = 100.0
+spot_range = 250.0
+spot_attenuation = 0.1
+spot_angle = 4.03
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0675079, 1.21853)
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_uhqc2")
 skeleton = NodePath("../MeshInstance3D2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.26249, 0.0232474, 0.628025)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("BoxMesh_cupel")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6/MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.645732)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_qhnay")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.262, 0.023, 0.628)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("BoxMesh_cupel")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D6/MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.645732)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_qhnay")
 
 [node name="Turet1" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.298075, 0.954543, 0, -0.954543, 0.298075, 0, 2.87599, -0.647687)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_lhb5w")
 
 [node name="ball" type="MeshInstance3D" parent="Turet1"]
 transform = Transform3D(1, 0, 0, 0, 0.295174, -0.955443, 0, 0.955443, 0.295174, 0, 0.404044, 8.3819e-09)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_2hem7")
 skeleton = NodePath("../../MeshInstance3D2")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Turet1/ball"]
 transform = Transform3D(-4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, 0, 0)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("7_gxbf6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_m2ye3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2"]
 transform = Transform3D(-4.37114e-08, 0, 1, -1, -4.37114e-08, -4.37114e-08, 4.37114e-08, -1, 1.91069e-15, 0, -1.84668e-08, -0.422472)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("BoxMesh_778fj")
 skeleton = NodePath("../..")
 
 [node name="Gun" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D"]
+<<<<<<< Updated upstream
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0772667, 0.519772, -0.0238015)
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0772667, 0.519772, 0)
+>>>>>>> Stashed changes
 mesh = SubResource("CylinderMesh_27a2p")
 
 [node name="GunSight" type="MeshInstance3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0615621, 0.186189, 0)
+<<<<<<< Updated upstream
 layers = 2
 mesh = SubResource("BoxMesh_a7t1a")
 
@@ -553,36 +1109,60 @@ mesh = SubResource("BoxMesh_a7t1a")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.199755, 0)
 layers = 2
 material_override = ExtResource("7_gxbf6")
+=======
+mesh = SubResource("BoxMesh_a7t1a")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Turet1/ball/MeshInstance3D2/MeshInstance3D/GunSight"]
+transform = Transform3D(1, 0, 0, 0, 0.258819, -0.965926, 0, 0.965926, 0.258819, 0, 0, 0)
+light_color = Color(1, 0, 0, 1)
+light_energy = 16.0
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.199755, 0)
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_5mgqs")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.73, 0)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_p50b0")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2/MeshInstance3D3"]
 transform = Transform3D(0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0, 0, 1, -0.5, 0.73, 0)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_e1ds8")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.73, 0)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_p50b0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D2/MeshInstance3D4"]
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 0.51054, 0.73, 0)
+<<<<<<< Updated upstream
 layers = 2
 material_override = ExtResource("4_am8j6")
+=======
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_e1ds8")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 0.995954, 0.0898678, 0, -0.0898678, 0.995954, 0, 2.05663, 0.784254)
+<<<<<<< Updated upstream
 layers = 2
 mesh = SubResource("SphereMesh_so1lr")
 
@@ -592,6 +1172,18 @@ visible = false
 layers = 2
 mesh = SubResource("QuadMesh_ein4f")
 
+=======
+mesh = SubResource("SphereMesh_so1lr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.552926, -0.83323, 0, 0.83323, 0.552926, 0, 129.701, -80.3241)
+visible = false
+mesh = SubResource("QuadMesh_ein4f")
+
+<<<<<<< Updated upstream
+[connection signal="timeout" from="Gun/Timer" to="Gun" method="_on_timer_timeout"]
+=======
+>>>>>>> Stashed changes
 [node name="Searchlight" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.08133, 0, 0, 0, 0.99634, 0.0854865, 0, -0.0854865, 0.99634, 0, 0, -4.56005)
 visible = false
@@ -639,7 +1231,11 @@ process_material = SubResource("ParticleProcessMaterial_lsr41")
 draw_pass_1 = SubResource("RibbonTrailMesh_lx3kh")
 
 [node name="Stage2" type="GPUParticles3D" parent="Celebration/Fireworks"]
+<<<<<<< Updated upstream
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -2.41336, -1.62297e-07)
+=======
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 5.34773, -2.41336, -1.62297e-07)
+>>>>>>> Stashed changes
 emitting = false
 amount = 1600
 lifetime = 1.5
@@ -653,6 +1249,7 @@ draw_pass_1 = SubResource("RibbonTrailMesh_5fsnt")
 transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, -0.747501, 23.5962, -18.4453)
 visible = false
 mesh = SubResource("QuadMesh_dtaom")
+<<<<<<< Updated upstream
 skeleton = NodePath("../../SpotLight3D3")
 
 [node name="SpotLight3D3" type="SpotLight3D" parent="."]
@@ -664,3 +1261,24 @@ shadow_enabled = true
 spot_range = 100.0
 spot_attenuation = 2.0
 spot_angle = 30.0
+=======
+skeleton = NodePath("")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5)
+rotation_edit_mode = 2
+mesh = SubResource("SphereMesh_s53op")
+
+[node name="SoftlockPreventionTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 10000
+visibility_aabb = AABB(-1495.81, -1496.98, 6.99999, 2991.78, 2994.17, 2.00272e-05)
+process_material = SubResource("ParticleProcessMaterial_4gdhp")
+draw_pass_1 = SubResource("PointMesh_xlcvd")
+
+[connection signal="timeout" from="SoftlockPreventionTimer" to="." method="_on_softlock_prevention_timer_timeout"]
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes

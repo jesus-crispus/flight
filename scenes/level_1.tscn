@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 [gd_scene load_steps=65 format=3 uid="uid://rp6iui1p8m68"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
@@ -11,6 +12,82 @@
 [ext_resource type="Material" uid="uid://b0jniu8oro2by" path="res://shaders/big_ship_material_2.tres" id="9_4vfab"]
 [ext_resource type="Theme" uid="uid://nl43u2d50qm2" path="res://ui/theme.tres" id="9_344wi"]
 [ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="10_tj28u"]
+=======
+<<<<<<< Updated upstream
+[gd_scene load_steps=35 format=3 uid="uid://rp6iui1p8m68"]
+
+[ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
+[ext_resource type="PackedScene" uid="uid://qknpp4ibwnnh" path="res://scenes/planet.tscn" id="1_mq4i5"]
+[ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
+[ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e42dc"]
+noise_type = 5
+frequency = 0.0076
+fractal_type = 3
+fractal_octaves = 10
+fractal_lacunarity = 3.215
+fractal_gain = 0.1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r7uqr"]
+width = 1000
+height = 1000
+seamless = true
+noise = SubResource("FastNoiseLite_e42dc")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2qk16"]
+width = 1000
+height = 1000
+seamless = true
+as_normal_map = true
+bump_strength = 50.0
+noise = SubResource("FastNoiseLite_e42dc")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hkjni"]
+albedo_color = Color(0.48492, 0.48492, 0.48492, 1)
+albedo_texture = SubResource("NoiseTexture2D_r7uqr")
+metallic = 1.0
+roughness = 0.56
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_2qk16")
+uv1_scale = Vector3(10, 50, 1)
+
+[sub_resource type="Curve" id="Curve_kw0xm"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_pwm8o"]
+curve = SubResource("Curve_kw0xm")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kokto"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 1000.0
+emission_ring_inner_radius = 300.0
+direction = Vector3(0, 0, 0)
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -100.0
+radial_accel_max = -100.0
+alpha_curve = SubResource("CurveTexture_pwm8o")
+
+[sub_resource type="Curve" id="Curve_vtjbv"]
+_data = [Vector2(0, 0.00174034), 0.0, 4.41974, 0, 0, Vector2(0.147874, 0.208179), 0.0206745, 0.0206745, 0, 0, Vector2(1, 0), -0.101546, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d0e8b"]
+transparency = 1
+vertex_color_use_as_albedo = true
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_qsh35"]
+material = SubResource("StandardMaterial3D_d0e8b")
+shape = 0
+size = 4.02
+curve = SubResource("Curve_vtjbv")
+>>>>>>> Stashed changes
 
 [sub_resource type="QuadMesh" id="QuadMesh_xjipn"]
 lightmap_size_hint = Vector2i(5002, 25002)
@@ -20,6 +97,22 @@ size = Vector2(1000, 5000)
 subdivide_width = 10
 subdivide_depth = 50
 
+=======
+[gd_scene load_steps=64 format=3 uid="uid://rp6iui1p8m68"]
+
+[ext_resource type="Script" path="res://level.gd" id="1_07gk5"]
+[ext_resource type="Shader" path="res://scenes/black_hole.gdshader" id="3_1oyxv"]
+[ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_bb42l"]
+[ext_resource type="PackedScene" uid="uid://cth3jm5ceuech" path="res://scenes/player2.tscn" id="4_hvsab"]
+[ext_resource type="Shader" path="res://scenes/black_hole_particle.gdshader" id="4_uubri"]
+[ext_resource type="Shader" path="res://shaders/level_1.gdshader" id="5_3he66"]
+[ext_resource type="Script" path="res://scenes/start_pad.gd" id="5_sbgbw"]
+[ext_resource type="Material" uid="uid://dahnjqbngbe2" path="res://shaders/big_ship_material.tres" id="8_f53pc"]
+[ext_resource type="Material" uid="uid://b0jniu8oro2by" path="res://shaders/big_ship_material_2.tres" id="9_4vfab"]
+[ext_resource type="Theme" uid="uid://nl43u2d50qm2" path="res://ui/theme.tres" id="9_344wi"]
+[ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="10_tj28u"]
+
+>>>>>>> Stashed changes
 [sub_resource type="GDScript" id="GDScript_rmdts"]
 script/source = "#@tool 
 extends Area3D
@@ -53,10 +146,21 @@ func set_radius():
 
 func _on_body_entered(body: Node3D) -> void:
 	if body.is_in_group(\"player\"):
+<<<<<<< Updated upstream
 		if one_time == false:
 			one_time= true
 			body.win()
 			%VictoryScreen.show()
+=======
+<<<<<<< Updated upstream
+		
+		pass
+=======
+		if one_time == false:
+			one_time= true
+			body.linear_damp = 1
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6ur1p"]
@@ -68,6 +172,7 @@ material = SubResource("ShaderMaterial_6ur1p")
 radius = 30.0
 height = 60.0
 
+<<<<<<< Updated upstream
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_w7ah8"]
 shader = ExtResource("4_uubri")
 shader_parameter/range_start = 100.0
@@ -159,6 +264,104 @@ rings = 255
 [sub_resource type="SphereShape3D" id="SphereShape3D_04y04"]
 radius = 30.0
 
+=======
+<<<<<<< Updated upstream
+[sub_resource type="SphereShape3D" id="SphereShape3D_04y04"]
+radius = 30.0
+
+=======
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w7ah8"]
+shader = ExtResource("4_uubri")
+shader_parameter/range_start = 500.0
+shader_parameter/range_end = 500.0
+shader_parameter/angle_per_frame = 1.0
+shader_parameter/black_hole_radius = 30.0
+
+[sub_resource type="Curve" id="Curve_u57oh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.501945, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5n66e"]
+cull_mode = 2
+albedo_color = Color(1, 0.15, 0.15, 1)
+emission_enabled = true
+emission = Color(0, 0.158333, 0.95, 1)
+emission_energy_multiplier = 1111.0
+disable_receive_shadows = true
+use_particle_trails = true
+
+[sub_resource type="TubeTrailMesh" id="TubeTrailMesh_ddhqb"]
+material = SubResource("StandardMaterial3D_5n66e")
+radius = 1.0
+radial_steps = 10
+section_length = 0.5
+curve = SubResource("Curve_u57oh")
+
+[sub_resource type="GDScript" id="GDScript_rur1k"]
+script/source = "extends GPUParticles3D
+
+@export var player : Node3D
+
+var stop = false
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	if stop == false:
+		self.global_position = (player.position + Vector3(0,0,-55))
+
+
+
+
+func _on_gravity_well_body_entered(body: Node3D) -> void:
+	stop = true
+	self.position = Vector3(0,0,0)
+	pass
+"
+
+[sub_resource type="Gradient" id="Gradient_dowio"]
+offsets = PackedFloat32Array(0, 0.316062, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.487047, 0.487047, 0.487047, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_adewu"]
+frequency = 0.038
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bhi3w"]
+seamless = true
+color_ramp = SubResource("Gradient_dowio")
+noise = SubResource("FastNoiseLite_adewu")
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gayv3"]
+seamless = true
+as_normal_map = true
+bump_strength = 32.0
+noise = SubResource("FastNoiseLite_adewu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nnhns"]
+render_priority = 0
+shader = ExtResource("5_3he66")
+shader_parameter/multiplier = 37.785
+shader_parameter/x_speed = 0.375
+shader_parameter/y_speed = 0.35
+shader_parameter/normal_texture = SubResource("NoiseTexture2D_gayv3")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_bhi3w")
+
+[sub_resource type="SphereMesh" id="SphereMesh_v233w"]
+material = SubResource("ShaderMaterial_nnhns")
+radius = 30.0
+height = 60.0
+radial_segments = 512
+rings = 255
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_04y04"]
+radius = 30.0
+
+>>>>>>> Stashed changes
 [sub_resource type="GDScript" id="GDScript_gbtjw"]
 script/source = "extends Area3D
 
@@ -174,8 +377,14 @@ func _process(delta: float) -> void:
 "
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_53d7m"]
+<<<<<<< Updated upstream
 radius = 500.0
 
+=======
+radius = 1000.0
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 [sub_resource type="BoxShape3D" id="BoxShape3D_aqdj6"]
 size = Vector3(13, 9, 7)
 
@@ -453,6 +662,7 @@ volumetric_fog_emission_energy = 0.0
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_07gk5")
 
+<<<<<<< Updated upstream
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
 visible = false
@@ -461,6 +671,76 @@ mesh = SubResource("QuadMesh_xjipn")
 
 [node name="objective" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 412.073, 877.471, 0)
+=======
+<<<<<<< Updated upstream
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+material_override = SubResource("StandardMaterial3D_hkjni")
+use_collision = true
+
+[node name="planet" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 149.733, 168.824, 0)
+planet_gravity_well_radius = 200.0
+
+[node name="planet2" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106.897, 305.165, 0)
+planet_gravity_well_radius = 200.0
+
+[node name="planet4" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -254.794, 639.203, 0)
+
+[node name="planet5" parent="CSGCombiner3D" instance=ExtResource("1_mq4i5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2000, 0)
+radius = 300.0
+radial_segments = 100
+rings = 50
+planet_radius = 300.0
+planet_gravity_well_radius = 1000.0
+gravity = 80.0
+
+[node name="Area3D" parent="CSGCombiner3D/planet5" index="0"]
+collision_layer = 3
+collision_mask = 3
+gravity_point_unit_distance = 300.0
+gravity = 1000.0
+
+[node name="GPUParticlesCollisionSphere3D" parent="CSGCombiner3D/planet5" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.796967, 0, 0.0411682)
+cull_mask = 4294967287
+
+[node name="GPUParticlesAttractorSphere3D" parent="CSGCombiner3D/planet5" index="2"]
+cull_mask = 4294967287
+radius = 1000.0
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="CSGCombiner3D/planet5"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
+layers = 4
+amount = 1000
+visibility_aabb = AABB(-995.815, -1001.89, -3.21294, 1994.57, 1998.3, 6.42588)
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_kokto")
+draw_pass_1 = SubResource("RibbonTrailMesh_qsh35")
+
+[node name="CSGSphere3D6" type="CSGSphere3D" parent="CSGCombiner3D"]
+transform = Transform3D(0.992384, 0.123186, 0, -0.123186, 0.992384, 0, 0, 0, 1, -20.5024, 615.98, 0)
+radius = 46.065
+radial_segments = 20
+rings = 10
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D/CSGSphere3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2483, -0.672058, 24.9031)
+operation = 2
+size = Vector3(37.0229, 148.234, 72.56)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.079, 10.743, -67.197)
+mesh = SubResource("QuadMesh_xjipn")
+
+[node name="objective" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2233.1, 0)
+=======
+[node name="objective" type="Area3D" parent="."]
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 script = SubResource("GDScript_rmdts")
 radius = 30.0
 
@@ -468,9 +748,17 @@ radius = 30.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
 mesh = SubResource("SphereMesh_r5nlw")
 
+<<<<<<< Updated upstream
 [node name="GPUParticles3D2" type="GPUParticles3D" parent="objective/MeshInstance3D" node_paths=PackedStringArray("player")]
 amount = 1000
 lifetime = 30.0
+=======
+<<<<<<< Updated upstream
+=======
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="objective/MeshInstance3D" node_paths=PackedStringArray("player")]
+amount = 1000
+lifetime = 60.0
+>>>>>>> Stashed changes
 interpolate = false
 visibility_aabb = AABB(-500, -500, -1, 1000, 1000, 2)
 local_coords = true
@@ -479,14 +767,24 @@ trail_lifetime = 0.97
 process_material = SubResource("ShaderMaterial_w7ah8")
 draw_pass_1 = SubResource("TubeTrailMesh_ddhqb")
 script = SubResource("GDScript_rur1k")
+<<<<<<< Updated upstream
 player = NodePath("../../../start_pad/RigidBody3D2")
+=======
+player = NodePath("../../../start_pad/player_spawn/RigidBody3D2")
+>>>>>>> Stashed changes
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objective/MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.1637)
 light_color = Color(0.38, 0.597, 1, 1)
+<<<<<<< Updated upstream
 light_energy = 555555.0
 omni_range = 5000.0
 omni_attenuation = 2.0
+=======
+light_energy = 399999.0
+omni_range = 7000.0
+omni_attenuation = 1.525
+>>>>>>> Stashed changes
 
 [node name="SpotLight3D" type="SpotLight3D" parent="objective/MeshInstance3D"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 54.2648)
@@ -499,14 +797,24 @@ spot_angle = 166.64
 spot_angle_attenuation = 3.13834
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="objective/MeshInstance3D"]
+<<<<<<< Updated upstream
 transform = Transform3D(1.475, 0, 0, 0, -6.44743e-08, -1.475, 0, 1.475, -6.44743e-08, 0, 0, 0)
+=======
+transform = Transform3D(1.47496, 0, -0.0111726, -0.0111726, -6.44743e-08, -1.47496, -4.88371e-10, 1.475, -6.44725e-08, 0, 0, 0)
+>>>>>>> Stashed changes
 mesh = SubResource("SphereMesh_v233w")
 
 [node name="GPUParticlesAttractorSphere3D" type="GPUParticlesAttractorSphere3D" parent="objective/MeshInstance3D"]
 strength = 128.0
 attenuation = 2.92817
+<<<<<<< Updated upstream
 radius = 1000.0
 
+=======
+radius = 5000.0
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 [node name="CollisionShape3D" type="CollisionShape3D" parent="objective"]
 shape = SubResource("SphereShape3D_04y04")
 
@@ -515,23 +823,60 @@ light_color = Color(0, 0.556863, 0.560784, 1)
 light_energy = 5555.0
 shadow_enabled = true
 omni_range = 500.0
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+omni_attenuation = 0.5
+=======
+>>>>>>> Stashed changes
 omni_attenuation = 1.185
 
 [node name="gravityWell" type="Area3D" parent="objective"]
 gravity_space_override = 1
 gravity_point = true
+<<<<<<< Updated upstream
 gravity = 32.0
+=======
+gravity = 16.0
+>>>>>>> Stashed changes
 script = SubResource("GDScript_gbtjw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="objective/gravityWell"]
 shape = SubResource("SphereShape3D_53d7m")
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 [node name="start_pad" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
+process_priority = 10
+process_physics_priority = 60
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -983.898, 0)
+script = ExtResource("5_sbgbw")
+start_distance_min = 1000.0
+start_distance_max = 1000.0
 
+<<<<<<< Updated upstream
 [node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1723.96, 0)
 gravity_scale = 0.93
+=======
+<<<<<<< Updated upstream
+[node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1691.91, 0)
+=======
+[node name="player_spawn" type="Node3D" parent="start_pad"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -26.2195, 0)
+
+[node name="RigidBody3D2" parent="start_pad/player_spawn" node_paths=PackedStringArray("victory_node", "enviorment_var", "objective") instance=ExtResource("4_hvsab")]
+unique_name_in_owner = true
+gravity_scale = 0.93
+victory_node = NodePath("../../../Ui/VictoryScreen")
+enviorment_var = NodePath("../../../WorldEnvironment")
+objective = NodePath("../../../objective")
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 [node name="StaticBody3D" type="StaticBody3D" parent="start_pad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -32.0723, 0)
@@ -956,18 +1301,72 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Ui/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+<<<<<<< Updated upstream
 text = "5555"
 label_settings = ExtResource("3_bb42l")
+=======
+<<<<<<< Updated upstream
+=======
+text = "666"
+label_settings = ExtResource("3_bb42l")
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 [node name="Label2" type="Label" parent="Ui/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+<<<<<<< Updated upstream
 text = "66666"
+=======
+<<<<<<< Updated upstream
+=======
+text = "0.666"
+label_settings = ExtResource("3_bb42l")
+>>>>>>> Stashed changes
+
+[node name="PuaseMenu" type="PanelContainer" parent="Ui"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+<<<<<<< Updated upstream
+[node name="MarginContainer" type="MarginContainer" parent="Ui/PuaseMenu"]
+=======
+[node name="VictoryScreen" type="Control" parent="Ui"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Ui/VictoryScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui/VictoryScreen/MarginContainer"]
+>>>>>>> Stashed changes
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Ui/PuaseMenu/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Ui/PuaseMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "place holder"
+>>>>>>> Stashed changes
 label_settings = ExtResource("3_bb42l")
 
 [node name="PuaseMenu" type="PanelContainer" parent="Ui"]
 visible = false
 layout_mode = 2
+<<<<<<< Updated upstream
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
@@ -1053,6 +1452,10 @@ label_settings = SubResource("LabelSettings_la757")
 [node name="Label" type="Label" parent="Ui/VBoxContainer2"]
 visible = false
 layout_mode = 2
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 text = "Press space to use 
 main thruster"
 label_settings = SubResource("LabelSettings_16swj")
@@ -1085,9 +1488,17 @@ skeleton = NodePath("../..")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." node_paths=PackedStringArray("player")]
 transform = Transform3D(0.904493, -0.213295, 0.369322, 0.379053, 0.798949, -0.466906, -0.195481, 0.562305, 0.803493, 381.324, -1781.61, 198.901)
 light_color = Color(0.958, 1, 0.72, 1)
+<<<<<<< Updated upstream
 light_energy = 2.387
 script = SubResource("GDScript_ukgk2")
 player = NodePath("../start_pad/RigidBody3D2")
+=======
+light_energy = 6.855
+directional_shadow_mode = 0
+script = SubResource("GDScript_ukgk2")
+player = NodePath("../start_pad/player_spawn/RigidBody3D2")
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rdba1")

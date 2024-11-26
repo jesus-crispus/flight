@@ -507,3 +507,9 @@ draw_pass_1 = SubResource("TubeTrailMesh_oa7pg")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1132.13, 324.223, 0)
 visible = false
 mesh = SubResource("SphereMesh_kd8cy")
+<<<<<<< Updated upstream
+=======
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1732.38, 0, -891.104)
+>>>>>>> Stashed changes

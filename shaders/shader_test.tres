@@ -6,6 +6,15 @@ code = "// NOTE: Shader automatically converted from Godot Engine 4.3.stable's S
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx, world_vertex_coords;
 
+<<<<<<< Updated upstream
+=======
+uniform float multiplier;
+uniform float start_time;
+uniform vec2 black_hole_pos;
+
+
+
+>>>>>>> Stashed changes
 uniform vec4 albedo : source_color;
 uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
 uniform float point_size : hint_range(0.1, 128.0, 0.1);
@@ -32,15 +41,42 @@ uniform vec3 uv1_offset;
 uniform vec3 uv2_scale;
 uniform vec3 uv2_offset;
 
+<<<<<<< Updated upstream
 void vertex() {
 	UV = UV * uv1_scale.xy + uv1_offset.xy;
 	
 	
+=======
+
+
+
+
+
+void vertex() {
+	UV = UV * uv1_scale.xy + uv1_offset.xy;
+
+
+>>>>>>> Stashed changes
 	UV = VERTEX.xy * 0.009;
 }
 
 void fragment() {
+<<<<<<< Updated upstream
 	vec2 base_uv = UV;
+=======
+
+	float start_distance = 1000.0;
+
+	//start_distance -
+	float distance_var = clamp(distance(UV,black_hole_pos), 0, start_distance);//inversesqrt(distance(UV,vec2(0,0)));
+	float multiplier_var;
+
+	float radian = radians(inversesqrt(distance_var) * (TIME - start_time) * 2.0);
+
+	mat2 rotation = mat2(vec2(cos(radian),sin(radian)),vec2(-sin(radian),cos(radian))) ;
+
+	vec2 base_uv = UV * rotation;
+>>>>>>> Stashed changes
 
 	{
 		// Height: Enabled
@@ -86,10 +122,17 @@ void fragment() {
 	// Normal Map: Enabled
 	NORMAL_MAP = texture(texture_normal, base_uv).rgb;
 	NORMAL_MAP_DEPTH = normal_scale;
+<<<<<<< Updated upstream
 	
 	
 	
 	
+=======
+
+
+
+
+>>>>>>> Stashed changes
 }
 "
 
@@ -121,6 +164,12 @@ noise = SubResource("FastNoiseLite_jsjxk")
 [resource]
 render_priority = 0
 shader = SubResource("Shader_e613w")
+<<<<<<< Updated upstream
+=======
+shader_parameter/multiplier = 22.885
+shader_parameter/start_time = 0.0
+shader_parameter/black_hole_pos = Vector2(0, 0)
+>>>>>>> Stashed changes
 shader_parameter/albedo = Color(0.264383, 0.340383, 0.375796, 1)
 shader_parameter/point_size = 1.0
 shader_parameter/roughness = 0.54
