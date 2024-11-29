@@ -1,6 +1,6 @@
 extends Node
 
-@export var Scene = preload("res://scenes/level_1.tscn")
+@export var Scene : PackedScene
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

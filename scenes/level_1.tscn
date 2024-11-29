@@ -435,15 +435,15 @@ sky_material = SubResource("ProceduralSkyMaterial_dkt5e")
 background_mode = 2
 sky = SubResource("Sky_j3a2u")
 tonemap_mode = 3
-tonemap_exposure = 0.11
+tonemap_exposure = 0.15
 glow_enabled = true
 glow_normalized = true
 glow_strength = 0.71
 glow_mix = 0.453
 glow_blend_mode = 1
 fog_enabled = true
-fog_light_color = Color(0.271818, 0.265975, 0.269334, 1)
-fog_density = 0.008
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 0.0015
 fog_aerial_perspective = 1.0
 volumetric_fog_density = 0.0205
 volumetric_fog_albedo = Color(0.392212, 0.312403, 0.404311, 1)
@@ -527,11 +527,11 @@ script = SubResource("GDScript_gbtjw")
 shape = SubResource("SphereShape3D_53d7m")
 
 [node name="start_pad" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1698.41, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1000, 0)
 
-[node name="RigidBody3D2" parent="start_pad" instance=ExtResource("4_hvsab")]
+[node name="RigidBody3D2" parent="start_pad" node_paths=PackedStringArray("enviorment_var") instance=ExtResource("4_hvsab")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1723.96, 0)
-gravity_scale = 0.93
+enviorment_var = NodePath("../../WorldEnvironment")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="start_pad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -32.0723, 0)

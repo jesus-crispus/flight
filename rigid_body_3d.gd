@@ -21,7 +21,6 @@ func _ready() -> void:
 	#%Camera3D.environment = enviorment_var
 	%Fireworks.emitting = true
 	#print(self.get_center_of_mass())
-	pass
 
 
 func _input(event: InputEvent) -> void:
@@ -39,11 +38,11 @@ func _input(event: InputEvent) -> void:
 		#$GPUParticles3D.emitting = false
 		#throttle = 0
 	
-	if event.is_action_pressed("breaking_thrusters"):
-		linear_damp = 1
-	
-	if event.is_action_released("breaking_thrusters"):
-		linear_damp = 0.7
+	#if event.is_action_pressed("breaking_thrusters"):
+		#linear_damp = 1
+	#
+	#if event.is_action_released("breaking_thrusters"):
+		#linear_damp = 0.7
 	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -56,7 +55,8 @@ func _input(event: InputEvent) -> void:
 		#throttle = clampf(throttle, 0.0, 1.0)
 	
 	
-	
+
+
 
 
 

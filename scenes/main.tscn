@@ -1,6 +1,7 @@
-[gd_scene load_steps=32 format=3 uid="uid://bgrr1tmj7vcar"]
+[gd_scene load_steps=33 format=3 uid="uid://bgrr1tmj7vcar"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_wk351"]
+[ext_resource type="PackedScene" uid="uid://rp6iui1p8m68" path="res://scenes/level_1.tscn" id="2_3ae6x"]
 [ext_resource type="Shader" uid="uid://cdw72rdg3a3tf" path="res://start.tres" id="2_mu2lj"]
 [ext_resource type="FontVariation" uid="uid://bo56x6eydyk7b" path="res://scenes/font.tres" id="3_a2fmx"]
 [ext_resource type="LabelSettings" uid="uid://c8o1joaul38x5" path="res://ui/large.tres" id="3_cjmct"]
@@ -212,6 +213,7 @@ size = Vector2(1980, 1080)
 
 [node name="Main" type="Node"]
 script = ExtResource("1_wk351")
+Scene = ExtResource("2_3ae6x")
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
 unique_name_in_owner = true

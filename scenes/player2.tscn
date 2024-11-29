@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=53 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
 [ext_resource type="Texture2D" uid="uid://ubinbjuynnqy" path="res://resources/arrow.png" id="6_oau8r"]
-[ext_resource type="PackedScene" uid="uid://bo1ygydudhmjt" path="res://gpu_particles_low.tscn" id="7_12cih"]
 [ext_resource type="Material" uid="uid://bsmmu78ajxbuy" path="res://shaders/dark_ship_metal.tres" id="7_gxbf6"]
 [ext_resource type="Material" uid="uid://ct4cb8b6iokkc" path="res://shaders/shader_test.tres" id="9_uv3bc"]
 
@@ -18,27 +17,108 @@ height = 7.47168
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_o56j1"]
 points = PackedVector3Array(0, 2, 0, 0, 2, 0.2, 1.8, 0, 0, 1.8, 0, 0.2, -1.8, 0, 0, -1.8, 0, 0.2)
 
-[sub_resource type="GDScript" id="GDScript_yqvit"]
-script/source = "extends Camera3D
+[sub_resource type="QuadMesh" id="QuadMesh_hq855"]
+material = ExtResource("9_uv3bc")
+size = Vector2(2560, 1280)
+
+[sub_resource type="GDScript" id="GDScript_lw6wp"]
+script/source = "extends MeshInstance3D
 
 var player: RigidBody3D
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	player = get_parent()
+	mesh.material.set_shader_parameter(\"start_time\",Time.get_ticks_msec() / 1000)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
-	look_at(player.position)
-	
+	self.position.x = player.position.x
+	self.position.y = player.position.y
 "
 
-[sub_resource type="QuadMesh" id="QuadMesh_hq855"]
-material = ExtResource("9_uv3bc")
-size = Vector2(512, 256)
+[sub_resource type="GDScript" id="GDScript_yqvit"]
+script/source = "extends Camera3D
+
+var player: RigidBody3D
+var start_hight: float
+var enviorment : WorldEnvironment
+
+@export var start_curve : Curve
+@export var end_curve : Curve
+@export var start_speed : float
+
+
+var start_has_ended: bool = false
+var end_has_started: bool = false
+
+var exposure_reference : float
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	
+	start_hight = position.z
+	player = get_parent()
+	enviorment = player.enviorment_var
+	exposure_reference = enviorment.environment.tonemap_exposure
+	start_sequence(0)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	
+	if start_has_ended == false:
+		start_sequence(delta)
+	
+	
+	
+	if end_has_started == false:
+		regular_mode()
+	
+	
+	else:
+		end_sequence()
+	
+	
+
+
+
+func regular_mode():
+	look_at(player.position)
+	
+	
+
+
+
+
+var start_counter : float = 0
+
+func start_sequence(delta):
+	
+	
+	var curve_output := (start_curve.sample(start_counter))
+	
+	
+	position.z = start_hight + curve_output
+	enviorment.environment.tonemap_exposure = exposure_reference * start_counter
+	
+	start_counter += start_speed * delta
+	
+	if start_counter >= 1:
+		start_has_ended = true
+
+
+func end_sequence():
+	pass
+"
+
+[sub_resource type="Curve" id="Curve_1yhyg"]
+max_value = 200.0
+_data = [Vector2(0, 200), 0.0, -487.443, 0, 0, Vector2(1, 0), -80.4288, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_mj5sn"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.503247, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.506), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_b2mkt"]
 bottom_radius = 0.2
@@ -58,6 +138,9 @@ script/source = "extends SpotLight3D
 
 var max_energy: float
 var angle: float
+
+var energy_variability : float = 0.25
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	max_energy = light_energy
@@ -70,7 +153,7 @@ func _process(delta: float) -> void:
 
 func update_range(throttle: float) -> void:
 	if throttle != 0:
-		light_energy = max_energy * throttle + randf_range(-25 + (-25 * throttle), 25 + (25 * throttle))
+		light_energy = max_energy * throttle + randf_range((1 - energy_variability) * (max_energy * throttle), (1 + energy_variability) + (25 * throttle))
 		if light_energy < 0:
 			light_energy = 0
 	else:
@@ -80,79 +163,6 @@ func update_range(throttle: float) -> void:
 	#spot_angle = angle - (throttle * 20)
 	
 "
-
-[sub_resource type="Curve" id="Curve_bqauu"]
-_data = [Vector2(0, 1), 0.0, -0.226728, 0, 0, Vector2(1, 0.186433), -2.02555, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_cg8db"]
-curve = SubResource("Curve_bqauu")
-
-[sub_resource type="Gradient" id="Gradient_rmsrc"]
-colors = PackedColorArray(1, 0.806, 0.03, 1, 1, 0.25, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ury25"]
-gradient = SubResource("Gradient_rmsrc")
-
-[sub_resource type="Gradient" id="Gradient_d553j"]
-offsets = PackedFloat32Array(0, 0.228873, 0.778169)
-colors = PackedColorArray(1, 1, 1, 1, 0.140845, 0.140845, 0.140845, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_lm51r"]
-gradient = SubResource("Gradient_d553j")
-
-[sub_resource type="Curve" id="Curve_vha8u"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.740741, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_c8cns"]
-curve = SubResource("Curve_vha8u")
-
-[sub_resource type="Curve" id="Curve_21jd5"]
-_data = [Vector2(0, 0.321483), 0.0, 0.240047, 0, 0, Vector2(0.675926, 1), -0.0300573, -0.0300573, 0, 0, Vector2(1, 0.483737), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_dgcbg"]
-curve = SubResource("Curve_21jd5")
-
-[sub_resource type="Curve" id="Curve_q3v4k"]
-max_value = 3.0
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 2.08548), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_jpcm8"]
-curve = SubResource("Curve_q3v4k")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3xkk"]
-lifetime_randomness = 0.3
-particle_flag_disable_z = true
-inherit_velocity_ratio = 1.0
-direction = Vector3(0, -1, 0)
-spread = 15.652
-initial_velocity_min = 26.32
-initial_velocity_max = 26.32
-gravity = Vector3(0, 0, 0)
-scale_min = 0.4
-scale_curve = SubResource("CurveTexture_dgcbg")
-scale_over_velocity_curve = SubResource("CurveTexture_jpcm8")
-color_ramp = SubResource("GradientTexture1D_lm51r")
-color_initial_ramp = SubResource("GradientTexture1D_ury25")
-alpha_curve = SubResource("CurveTexture_cg8db")
-emission_curve = SubResource("CurveTexture_c8cns")
-collision_mode = 1
-collision_friction = 0.0
-collision_bounce = 0.3
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhrmw"]
-transparency = 1
-depth_draw_mode = 1
-vertex_color_use_as_albedo = true
-albedo_color = Color(0.99, 0.4455, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_6mc63"]
-material = SubResource("StandardMaterial3D_hhrmw")
-radius = 1.0
-height = 2.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_uhqc2"]
 height = 0.73
@@ -354,17 +364,22 @@ shape = SubResource("SphereShape3D_1ygqx")
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -3.92186, -0.1)
 shape = SubResource("ConvexPolygonShape3D_o56j1")
 
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -45)
+top_level = true
+mesh = SubResource("QuadMesh_hq855")
+script = SubResource("GDScript_lw6wp")
+
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 94.894)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 90)
 current = true
 fov = 90.0
 script = SubResource("GDScript_yqvit")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -128.023)
-mesh = SubResource("QuadMesh_hq855")
-skeleton = NodePath("../..")
+start_curve = SubResource("Curve_1yhyg")
+end_curve = SubResource("Curve_mj5sn")
+start_speed = 0.3
 
 [node name="thruster" type="Node3D" parent="."]
 process_priority = 1
@@ -389,9 +404,6 @@ mesh = SubResource("CylinderMesh_03ru6")
 stream = ExtResource("6_eofso")
 volume_db = 80.0
 parameters/looping = true
-
-[node name="GPUParticles3D" parent="thruster" instance=ExtResource("7_12cih")]
-visible = false
 
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster"]
 transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 2.38214, 0)
@@ -440,19 +452,6 @@ mesh = SubResource("CylinderMesh_03ru6")
 stream = ExtResource("6_eofso")
 volume_db = 80.0
 parameters/looping = true
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="thruster2"]
-process_priority = 1
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, -4, 0)
-top_level = true
-visible = false
-amount = 200
-lifetime = 1.5
-randomness = 1.0
-visibility_aabb = AABB(-27.93, 2, -6, 62.04, -100, 26.725)
-draw_order = 2
-process_material = SubResource("ParticleProcessMaterial_e3xkk")
-draw_pass_1 = SubResource("SphereMesh_6mc63")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 4.02792, 0)

@@ -8,25 +8,25 @@ varying vec2 global_position;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
-	
+
 	global_position = VERTEX.xy;
 	global_position *= 0.01;
 }
 
 void fragment() {
 	// Called for every pixel the material is visible on.
-	
-	
+
+
 	NORMAL = VIEW * texture(normal_texture,global_position).rgb;
 	ALBEDO = texture(noise_texture,global_position).rgb;
 	ALBEDO = NORMAL;
-	
+
 	ROUGHNESS = 0.54;
-	
-	
-	
-	
-	
+
+
+
+
+
 }
 
 //void light() {
