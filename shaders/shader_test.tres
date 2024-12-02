@@ -42,32 +42,32 @@ uniform vec3 uv2_offset;
 
 void vertex() {
 	UV = UV * uv1_scale.xy + uv1_offset.xy;
-	
-	
+
+
 	UV = VERTEX.xy * 0.009;
 }
 
 void fragment() {
-	
-	
-	
+
+
+
 	float start_distance = 1000.0;
 	//start_distance -
-	float distance_var = clamp(distance(UV,vec2(0)), 0, start_distance);//inversesqrt(distance(UV,vec2(0,0)));
+	float distance_var = clamp(distance(UV,vec2(0,0)), 0, start_distance);//inversesqrt(distance(UV,vec2(0,0)));
 	//float multiplier_var;
 
 	float radian = radians(inversesqrt(distance_var) * (TIME - start_time) * 2.0);
 
 	mat2 rotation = mat2(vec2(cos(radian),sin(radian)),vec2(-sin(radian),cos(radian))) ;
-	
+
 	vec2 base_uv = UV * rotation;
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	{
 		// Height: Enabled
 		vec3 view_dir = normalize(normalize(-VERTEX + EYE_OFFSET) * mat3(TANGENT * heightmap_flip.x, -BINORMAL * heightmap_flip.y, NORMAL));
@@ -112,10 +112,10 @@ void fragment() {
 	// Normal Map: Enabled
 	NORMAL_MAP = texture(texture_normal, base_uv).rgb;
 	NORMAL_MAP_DEPTH = normal_scale;
-	
-	
-	
-	
+
+
+
+
 }
 "
 

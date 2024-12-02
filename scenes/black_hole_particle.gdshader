@@ -4,7 +4,9 @@ uniform float range_start;
 uniform float range_end;
 uniform float angle_per_frame;
 uniform float black_hole_radius;
-
+uniform float fall_speed;
+uniform sampler2D scale_curve : hint_default_white;
+uniform sampler2D speed_curve : hint_default_white;
 
 uint hash( uint x ) {
     x += ( x << 10u );
@@ -38,24 +40,7 @@ float range(vec3 v){return v.x * (v.z - v.y) + v.y;}
 
 
 
-//vec3 restart() {
-	//float random_number1 = random(uvec3(RANDOM_SEED,floatBitsToUint(TIME),NUMBER));
-	//float random_number2 = random(uvec3(RANDOM_SEED,NUMBER,floatBitsToUint(TIME)));
-	//float random_number3 = random(uvec3(NUMBER,floatBitsToUint(TIME),RANDOM_SEED));
-	//
-	//
-	//
-	//float distance_var = range(vec3(random_number3,range_start,range_end));
-	//
-	//float range_1 = range(vec3(random_number1,-1.0,1.0));
-	//float range_2 = range(vec3(random_number2,-1.0,1.0));
-	//
-	//vec2 star_normal2d = normalize(vec2(range_1,range_2));
-	//
-	//vec3 start_position = vec3(star_normal2d.x,star_normal2d.x,0) * distance_var;
-	//
-	//return start_position;
-//}
+
 
 
 
@@ -90,16 +75,16 @@ void process() {
 	}
 
 	float scale = USERDATA1.x;
-	float distance_from_singularity = USERDATA1.y;
-
-	if (scale < 1.0){
-
-		scale = clamp(scale + DELTA * 0.001,0,1);
-	}
 
 
 
 
+
+
+	//if (scale < 1.0){
+//
+		//scale = clamp(scale + DELTA * 0.001,0,1);
+	//}
 
 
 		//
@@ -112,31 +97,43 @@ void process() {
 		//
 		//VELOCITY = start_position;
 
-	float radian = radians(angle_per_frame + (sqrt(TIME - USERDATA1.z) * 1.01)) ;
+	float radian = radians((angle_per_frame + texture(speed_curve,vec2(USERDATA1.y,0))).x * DELTA) ;
 
 
-	float modifier = -0.001;
+	float modifier = -fall_speed;
 
-	mat3 basis_change = mat3(vec3(cos(radian)+ modifier,sin(radian)+ modifier,0.0), vec3(-sin(radian)+ modifier,cos(radian)+ modifier,0), vec3(0,0,1));
+	mat3 basis_change = mat3(vec3(cos(radian)+ modifier,sin(radian),0.0), vec3(-sin(radian),cos(radian)+ modifier,0), vec3(0,0,1));
 
-	//mat4 scale_matrix = mat4(vec4(1,0,0,1),vec4(0,1,0,1),vec4(0,0,1,1),vec4(vec3(0,0,0),0));
 
-	//distance_from_singularity = distance_from_singularity - 0;
 
 	mat4 rotation = mat4(basis_change);// + mat4(vec4(0),vec4(0),vec4(0),vec4(vec3(0,0,0),0));
-	
-	//if (distance_from_singularity > black_hole_radius){
-		//respawn = true;
+
+
+
+	float distance_from_singularity = length(TRANSFORM[3].xyz);
+
+
+	//if (distance_from_singularity < black_hole_radius){
+	//respawn = true;
 	//}
-	
-	
-	
-	
+
 	//COLOR.x = LIFETIME/ 10.0;
 	//TRANSFORM = mat4(vec4(1,0,0,0), vec4(0,1,0,0), vec4(0,0,1,0), vec4(distance_from_singularity,0,0,1) );
 	TRANSFORM = rotation * TRANSFORM;//(TRANSFORM - mat4(vec4(0), vec4(0), vec4(0), vec4(-1,0,0,0) ));
 	//TRANSFORM =  scale_matrix * TRANSFORM ;
 
+	float persentage_distance = clamp(distance_from_singularity/ range_end,0,1);
+
+	scale = texture(scale_curve, vec2(persentage_distance,0)).x;
+
+
+
+	TRANSFORM[0].xyz = normalize(TRANSFORM[0].xyz);
+	TRANSFORM[1].xyz = normalize(TRANSFORM[1].xyz);
+	TRANSFORM[2].xyz = normalize(TRANSFORM[2].xyz);
+	TRANSFORM[0].xyz *= sign(scale) * max(abs(scale), 0.001);
+	TRANSFORM[1].xyz *= sign(scale) * max(abs(scale), 0.001);
+	TRANSFORM[2].xyz *= sign(scale) * max(abs(scale), 0.001);
 
 
 	if (respawn == true){
@@ -147,7 +144,7 @@ void process() {
 		float distance_var = range(vec3(random_number3,range_start,range_end));
 		float rotation = range(vec3(random_number1,0,TAU));
 
-		TRANSFORM = mat4( vec4(1,0,0,1), vec4(0,1,0,1), vec4(0,0,1,1), vec4(distance_var,5,0,1) );
+		TRANSFORM = mat4( vec4(1,0,0,1), vec4(0,1,0,1), vec4(0,0,1,1), vec4(distance_var,0,0,1) );
 		TRANSFORM = rotate_matrix_z(rotation) * TRANSFORM;
 
 		USERDATA1.x = 0.0;
@@ -158,16 +155,16 @@ void process() {
 	}
 
 
-	//if(LIFETIME > 10.0){
-	//
-	//respawn;
-//
-	//}
+
+
+	//COLOR.xyz = vec3((1.0 - persentage_distance)*55.0,0,0);
+
+
 
 	USERDATA1.x = scale;
-	USERDATA1.y = distance_from_singularity;
-	
-	
-	
+	USERDATA1.y = persentage_distance;
+
+
+
 
 }
