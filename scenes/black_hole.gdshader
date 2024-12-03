@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshaded;
+render_mode unshaded,depth_test_disabled;
 
 void vertex() {
 	// Called for every vertex the material is visible on.

@@ -1,13 +1,13 @@
 shader_type spatial;
 render_mode particle_trails,world_vertex_coords,ambient_light_disabled,shadows_disabled;
 
-uniform sampler2D normal_texture: hint_normal;
-uniform sampler2D noise_texture: hint_default_black;
 
-uniform vec3 color: source_color;
-uniform vec3 color_iner: source_color;
-uniform vec3 color_outer: source_color;
 
+
+uniform sampler2D curve: repeat_disable;
+
+uniform sampler2D curve_emission: repeat_disable;
+uniform float emission_multilpier;
 varying float percent_distance;
 
 void vertex() {
@@ -17,11 +17,14 @@ void vertex() {
 
 void fragment() {
 	// Called for every pixel the material is visible on.
-	ALBEDO = color *1.0;
-	ALBEDO += (color_iner *10.0) * (1.0 - percent_distance);
-	ALBEDO += (color_outer *10.0) * (percent_distance);
-	//ALPHA = 0.1;
-	//ALPHA_HASH_SCALE = 1.0;
+	ALBEDO = vec3(1,1,1);
+	ALBEDO *=  texture(curve,vec2(percent_distance)).rgb;
+	//(ALBEDO += (color_outer) * texture(curve_outer,vec2(percent_distance)).x;
+	ALPHA = 0.1;
+	EMISSION = ALBEDO * (emission_multilpier * texture(curve_emission, vec2(percent_distance)).r);
+	ROUGHNESS = 1.0;
+
+
 }
 
 //void light() {

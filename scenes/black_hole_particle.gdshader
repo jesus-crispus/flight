@@ -5,7 +5,7 @@ uniform float range_end;
 uniform float angle_per_frame;
 uniform float black_hole_radius;
 uniform float fall_speed;
-uniform sampler2D scale_curve : hint_default_white;
+uniform sampler2D scale_curve:  repeat_disable;
 uniform sampler2D speed_curve : hint_default_white;
 
 uint hash( uint x ) {
@@ -78,7 +78,7 @@ void process() {
 
 
 
-
+float modifier = 0.0;
 
 
 	//if (scale < 1.0){
@@ -87,22 +87,18 @@ void process() {
 	//}
 
 
-		//
-		//float range_1 = range(vec3(random_number1,1.0,1.0));
-		//float range_2 = range(vec3(random_number2,1.0,1.0));
-		//
-		//vec2 star_normal2d = normalize(vec2(range_1,range_2));
-		//
-		//vec3 start_position = vec3(star_normal2d.x,star_normal2d.x,0) * distance_var;
-		//
-		//VELOCITY = start_position;
+	if(USERDATA1.z <= 0.0 ) {
+		modifier = -fall_speed * clamp(1.0 - USERDATA1.y,0.1,1);
+		}
+else{
+	USERDATA1.z -= 1.0;
 
-	float radian = radians((angle_per_frame + texture(speed_curve,vec2(USERDATA1.y,0))).x * DELTA) ;
+}
 
 
-	float modifier = -fall_speed;
+float radian = radians((angle_per_frame + texture(speed_curve,vec2(USERDATA1.y,0))).x * DELTA) ;
 
-	mat3 basis_change = mat3(vec3(cos(radian)+ modifier,sin(radian),0.0), vec3(-sin(radian),cos(radian)+ modifier,0), vec3(0,0,1));
+	mat3 basis_change = mat3(vec3(cos(radian)+ modifier,sin(radian),0.0), vec3(-sin(radian),cos(radian)+ modifier,0.0), vec3(0,0,1.0));
 
 
 
@@ -122,7 +118,7 @@ void process() {
 	TRANSFORM = rotation * TRANSFORM;//(TRANSFORM - mat4(vec4(0), vec4(0), vec4(0), vec4(-1,0,0,0) ));
 	//TRANSFORM =  scale_matrix * TRANSFORM ;
 
-	float persentage_distance = clamp(distance_from_singularity/ range_end,0,1);
+	float persentage_distance = ((distance_from_singularity)/ range_end);
 
 	scale = texture(scale_curve, vec2(persentage_distance,0)).x;
 
@@ -149,7 +145,7 @@ void process() {
 
 		USERDATA1.x = 0.0;
 		USERDATA1.y = distance_var;
-		USERDATA1.z = TIME;
+		USERDATA1.z = 10.0;
 		//VELOCITY += vec3(0,0,1);
 
 	}

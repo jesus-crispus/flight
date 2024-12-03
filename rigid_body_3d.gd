@@ -1,5 +1,9 @@
 extends RigidBody3D
 
+
+@export var thrust_loss_curve: Curve
+@export var thrust_loss_start_distance: float
+@export var lose_screen: Control
 @export var ship_resourse: ShipResource
 @export var enviorment_var : WorldEnvironment
 
@@ -87,14 +91,20 @@ func main_engine():
 	ship_resourse.throttle = throttle
 	
 	
+	var thrust_lost = thrust_loss_curve.sample(clamp(position.length(),0,thrust_loss_start_distance)/thrust_loss_start_distance)
 	
 	
-	
-	self.apply_central_force(self.basis.y * ((thrust_curve.sample(throttle) * mass * thrust) * physics_process_delta))
+	self.apply_central_force(self.basis.y * ((thrust_curve.sample(throttle) * mass * thrust) * physics_process_delta)*thrust_lost)
 	speed_lable.text = "speed : " + str( int( abs(self.linear_velocity.x) + abs(self.linear_velocity.y) + abs(self.linear_velocity.z)))
 	throttle_lable.text = "throttle : " + str(throttle)
+	
+	
+	if position.length() < 30:
+		speed_lable.text = "speed : ERROR" 
+	
+	
 
-
+	
 func breaking_thrusters():
 	
 	pass
@@ -116,8 +126,8 @@ func win():
 @onready var camera = %Camera3D
 func turn():
 	var mouse_position_2d: Vector2 = get_viewport().get_mouse_position()
-	var mouse_position_3d: Vector3 = camera.project_position(mouse_position_2d, 1)
-	
+	var mouse_position_3d: Vector3 = camera.project_position(mouse_position_2d, 100)
+
 	#var angle_to_mouse = Vector2(camera.position.x, camera.position.y).angle_to(Vector2(mouse_position_3d.x ,mouse_position_3d.y))
 	
 	

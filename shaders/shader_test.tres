@@ -6,6 +6,7 @@ code = "// NOTE: Shader automatically converted from Godot Engine 4.3.stable's S
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx, world_vertex_coords;
 
+
 uniform float multiplier;
 uniform float start_time;
 
@@ -57,6 +58,8 @@ void fragment() {
 	//float multiplier_var;
 
 	float radian = radians(inversesqrt(distance_var) * (TIME - start_time) * 2.0);
+
+
 
 	mat2 rotation = mat2(vec2(cos(radian),sin(radian)),vec2(-sin(radian),cos(radian))) ;
 

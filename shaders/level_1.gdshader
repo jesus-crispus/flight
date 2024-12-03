@@ -1,5 +1,10 @@
 shader_type spatial;
-render_mode cull_front;
+render_mode depth_test_disabled;
+
+uniform sampler2D curve: repeat_disable;
+uniform float emission_multilpier;
+varying float percent_distance;
+
 
 uniform float multiplier;
 uniform float x_speed;
@@ -39,7 +44,7 @@ void vertex() {
 	y =  VERTEX.y;
 	//VERTEX.x *= abs(VERTEX.z);
 	//VERTEX.y *= abs(VERTEX.z);
-
+	percent_distance = length(vec2(VERTEX.xy))/500.0;
 }
 
 void fragment() {
@@ -53,15 +58,15 @@ void fragment() {
 	//ALPHA = texture(noise_texture, modified_uv).r;
 
 
-	//NORMAL *
-	//modelview_matrix *
-	//NORMAL = NORMAL *  (vec4(texture(normal_texture, modified_uv).rgb,0.0)).xyz;
-	//ALBEDO = texture(noise_texture, modified_uv).rgb;
+	ALBEDO = vec3(1,1,1);
+	ALBEDO *=  texture(curve,vec2(percent_distance)).rgb;
+	//(ALBEDO += (color_outer) * texture(curve_outer,vec2(percent_distance)).x;
+	
+	EMISSION = ALBEDO * emission_multilpier;
+	//(ALPHA = 0.5;
 
 
-
-
-	EMISSION = ALBEDO *15.0;
+	//EMISSION = ALBEDO *85.0;
 }
 
 //void light() {

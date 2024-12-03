@@ -1,13 +1,16 @@
-[gd_scene load_steps=53 format=3 uid="uid://cth3jm5ceuech"]
+[gd_scene load_steps=54 format=3 uid="uid://cth3jm5ceuech"]
 
 [ext_resource type="Script" path="res://rigid_body_3d.gd" id="1_ev10d"]
 [ext_resource type="Resource" uid="uid://cy0ruo8blca0p" path="res://resources/ship_1.tres" id="2_tni1v"]
 [ext_resource type="Material" uid="uid://djn3qea0h0xl1" path="res://shaders/ship_metal.tres" id="4_am8j6"]
 [ext_resource type="Script" path="res://engine.gd" id="5_b5741"]
 [ext_resource type="AudioStream" uid="uid://bnte1a5ioy1nv" path="res://sound/SFX - Main engine thrust.ogg" id="6_eofso"]
-[ext_resource type="Texture2D" uid="uid://ubinbjuynnqy" path="res://resources/arrow.png" id="6_oau8r"]
 [ext_resource type="Material" uid="uid://bsmmu78ajxbuy" path="res://shaders/dark_ship_metal.tres" id="7_gxbf6"]
 [ext_resource type="Material" uid="uid://ct4cb8b6iokkc" path="res://shaders/shader_test.tres" id="9_uv3bc"]
+
+[sub_resource type="Curve" id="Curve_yfvxd"]
+_data = [Vector2(0, 0), 0.0, 1.58174, 0, 0, Vector2(1, 1), 0.652982, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_35t6q"]
 height = 7.47168
@@ -19,7 +22,7 @@ points = PackedVector3Array(0, 2, 0, 0, 2, 0.2, 1.8, 0, 0, 1.8, 0, 0.2, -1.8, 0,
 
 [sub_resource type="QuadMesh" id="QuadMesh_hq855"]
 material = ExtResource("9_uv3bc")
-size = Vector2(2560, 1280)
+size = Vector2(10000, 10000)
 
 [sub_resource type="GDScript" id="GDScript_lw6wp"]
 script/source = "extends MeshInstance3D
@@ -46,8 +49,9 @@ var enviorment : WorldEnvironment
 
 @export var start_curve : Curve
 @export var end_curve : Curve
+@export var lerp_amount_curve : Curve
 @export var start_speed : float
-
+@export var end_start_distance : float
 
 var start_has_ended: bool = false
 var end_has_started: bool = false
@@ -71,7 +75,7 @@ func _process(delta: float) -> void:
 	
 	
 	
-	if end_has_started == false:
+	if player.position.length() - 100 > end_start_distance:
 		regular_mode()
 	
 	
@@ -83,10 +87,10 @@ func _process(delta: float) -> void:
 
 
 func regular_mode():
-	look_at(player.position)
+	#look_at(player.position)
 	
-	
-
+	position.x = player.position.x
+	position.y = player.position.y
 
 
 
@@ -108,7 +112,10 @@ func start_sequence(delta):
 
 
 func end_sequence():
-	pass
+	var distance_percent = (player.position.length() - 30)/end_start_distance
+	var new_position = player.position.lerp(Vector3(0,0,0),lerp_amount_curve.sample(clamp(distance_percent,0,1)))
+	new_position.z = start_hight + end_curve.sample(clamp(distance_percent,0,1))
+	position = new_position
 "
 
 [sub_resource type="Curve" id="Curve_1yhyg"]
@@ -117,7 +124,13 @@ _data = [Vector2(0, 200), 0.0, -487.443, 0, 0, Vector2(1, 0), -80.4288, 0.0, 0, 
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_mj5sn"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.503247, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.506), 0.0, 0.0, 0, 0]
+min_value = -68.0
+max_value = 1024.0
+_data = [Vector2(0, -66), 0.0, 15435.3, 0, 0, Vector2(0.050193, 167.066), 0.0, 0.0, 0, 0, Vector2(0.119691, 176.767), 1083.86, 1083.86, 0, 0, Vector2(0.407051, 130.915), -788.08, -788.08, 0, 0, Vector2(1, 0), -102.793, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="Curve" id="Curve_0sug3"]
+_data = [Vector2(0.097561, 1), 0.0, 0.0, 0, 0, Vector2(0.101045, 1), -2.71169, -2.71169, 0, 0, Vector2(0.960396, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_b2mkt"]
@@ -350,6 +363,8 @@ continuous_cd = true
 linear_damp = 0.7
 angular_damp = 1.0
 script = ExtResource("1_ev10d")
+thrust_loss_curve = SubResource("Curve_yfvxd")
+thrust_loss_start_distance = 1500.0
 ship_resourse = ExtResource("2_tni1v")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -373,13 +388,17 @@ script = SubResource("GDScript_lw6wp")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
+process_priority = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 90)
+top_level = true
 current = true
 fov = 90.0
 script = SubResource("GDScript_yqvit")
 start_curve = SubResource("Curve_1yhyg")
 end_curve = SubResource("Curve_mj5sn")
-start_speed = 0.3
+lerp_amount_curve = SubResource("Curve_0sug3")
+start_speed = 0.2
+end_start_distance = 1000.0
 
 [node name="thruster" type="Node3D" parent="."]
 process_priority = 1
@@ -447,11 +466,6 @@ skeleton = NodePath("../../MeshInstance3D2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.22786, 0)
 layers = 3
 mesh = SubResource("CylinderMesh_03ru6")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="thruster2"]
-stream = ExtResource("6_eofso")
-volume_db = 80.0
-parameters/looping = true
 
 [node name="SpotLight3D" type="SpotLight3D" parent="thruster2"]
 transform = Transform3D(1, 0, 0, 0, 0.483893, 0.875127, 0, -0.875127, 0.483893, -2.15959, 4.02792, 0)
@@ -652,14 +666,4 @@ draw_pass_1 = SubResource("RibbonTrailMesh_5fsnt")
 transform = Transform3D(-0.0454327, -0.998967, 0, 0.998967, -0.0454327, 0, 0, 0, 1, -0.747501, 23.5962, -18.4453)
 visible = false
 mesh = SubResource("QuadMesh_dtaom")
-skeleton = NodePath("../../SpotLight3D3")
-
-[node name="SpotLight3D3" type="SpotLight3D" parent="."]
-transform = Transform3D(-0.188613, -0.981878, -0.0184403, 0.880588, -0.160784, -0.445773, 0.43473, -0.100317, 0.894956, 0, 2.13675, -1.26239)
-light_color = Color(0.57, 0.17271, 0.1026, 1)
-light_energy = 50000.0
-light_projector = ExtResource("6_oau8r")
-shadow_enabled = true
-spot_range = 100.0
-spot_attenuation = 2.0
-spot_angle = 30.0
+skeleton = NodePath("")
