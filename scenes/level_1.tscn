@@ -460,7 +460,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	text = str(\"distance to objective: \",int(player.position.length()),\"m\")
-	if player.position.length() > 11000:
+	if player.position.length() > 6000:
 		%LoseScreen.lost = true
 "
 
@@ -530,22 +530,30 @@ script/source = "extends Control
 @export var player : Node3D
 @export var enviorment : WorldEnvironment
 var exposure_reference : float
-var counter := 100
+var counter := 1
 var lost : bool = false
 
 func _ready() -> void:
-	exposure_reference = enviorment.environment.tonemap_exposure
+	exposure_reference = player.get_child(0).exposure_reference
+	lost = false
 
 func  _process(delta: float) -> void:
 	if lost == true :
 		lose(delta)
 func lose(delta):
+	print(counter)
 	if counter <= 0:
 		self.show()
 		
 	else :
-		counter -= delta * 0.001
-		enviorment.environment.tonemap_exposure = exposure_reference * (counter / 10)
+		
+		counter = counter * $LoseTimer.time_left
+		enviorment.environment.tonemap_exposure = exposure_reference * (counter)
+		
+
+
+func _on_button_button_up() -> void:
+		enviorment.environment.tonemap_exposure = exposure_reference
 "
 
 [sub_resource type="QuadMesh" id="QuadMesh_quq7r"]
@@ -1242,6 +1250,7 @@ texture = ExtResource("12_5poxu")
 
 [node name="LoseScreen" type="Control" parent="CanvasLayer/Ui" node_paths=PackedStringArray("player", "enviorment")]
 unique_name_in_owner = true
+process_priority = 10
 visible = false
 layout_mode = 2
 script = SubResource("GDScript_17ggi")
@@ -1291,6 +1300,9 @@ grow_vertical = 2
 text = "Restart"
 label_settings = SubResource("LabelSettings_7bji5")
 
+[node name="LoseTimer" type="Timer" parent="CanvasLayer/Ui/LoseScreen"]
+one_shot = true
+
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 rotation_edit_mode = 1
 mesh = SubResource("QuadMesh_quq7r")
@@ -1316,3 +1328,4 @@ environment = SubResource("Environment_rdba1")
 [connection signal="button_up" from="CanvasLayer/Ui/VictoryScreen/MarginContainer/VBoxContainer/Button" to="." method="_on_button_button_up"]
 [connection signal="toggled" from="CanvasLayer/Ui/VBoxContainer2/CheckBox" to="CanvasLayer/Ui/VBoxContainer2/CheckBox" method="_on_toggled"]
 [connection signal="button_up" from="CanvasLayer/Ui/LoseScreen/MarginContainer/VBoxContainer/Button" to="." method="_on_button_button_up"]
+[connection signal="button_up" from="CanvasLayer/Ui/LoseScreen/MarginContainer/VBoxContainer/Button" to="CanvasLayer/Ui/LoseScreen" method="_on_button_button_up"]

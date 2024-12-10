@@ -61,7 +61,7 @@ void fragment() {
 	ALBEDO = vec3(1,1,1);
 	ALBEDO *=  texture(curve,vec2(percent_distance)).rgb;
 	//(ALBEDO += (color_outer) * texture(curve_outer,vec2(percent_distance)).x;
-	
+
 	EMISSION = ALBEDO * emission_multilpier;
 	//(ALPHA = 0.5;
 
