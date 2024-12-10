@@ -460,8 +460,10 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	text = str(\"distance to objective: \",int(player.position.length()),\"m\")
-	if player.position.length() > 6000:
+	if player.position.length() > 11000:
 		%LoseScreen.lost = true
+		if %LoseTimer.is_stopped() == true and %LoseScreen.visible == false:
+			%LoseTimer.start()
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_vce2m"]
@@ -541,7 +543,6 @@ func  _process(delta: float) -> void:
 	if lost == true :
 		lose(delta)
 func lose(delta):
-	print(counter)
 	if counter <= 0:
 		self.show()
 		
@@ -554,6 +555,10 @@ func lose(delta):
 
 func _on_button_button_up() -> void:
 		enviorment.environment.tonemap_exposure = exposure_reference
+
+
+func _on_lose_timer_timeout() -> void:
+	self.show()
 "
 
 [sub_resource type="QuadMesh" id="QuadMesh_quq7r"]
@@ -1301,6 +1306,7 @@ text = "Restart"
 label_settings = SubResource("LabelSettings_7bji5")
 
 [node name="LoseTimer" type="Timer" parent="CanvasLayer/Ui/LoseScreen"]
+unique_name_in_owner = true
 one_shot = true
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
@@ -1329,3 +1335,4 @@ environment = SubResource("Environment_rdba1")
 [connection signal="toggled" from="CanvasLayer/Ui/VBoxContainer2/CheckBox" to="CanvasLayer/Ui/VBoxContainer2/CheckBox" method="_on_toggled"]
 [connection signal="button_up" from="CanvasLayer/Ui/LoseScreen/MarginContainer/VBoxContainer/Button" to="." method="_on_button_button_up"]
 [connection signal="button_up" from="CanvasLayer/Ui/LoseScreen/MarginContainer/VBoxContainer/Button" to="CanvasLayer/Ui/LoseScreen" method="_on_button_button_up"]
+[connection signal="timeout" from="CanvasLayer/Ui/LoseScreen/LoseTimer" to="CanvasLayer/Ui/LoseScreen" method="_on_lose_timer_timeout"]
